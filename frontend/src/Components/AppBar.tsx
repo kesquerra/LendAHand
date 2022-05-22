@@ -2,12 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import {Box, AppBar as Bar, Toolbar, Typography, Button, ButtonGroup} from '@mui/material'
 import { APPBAR, ROUTER_PATHS } from '../Constants';
+import testBackendConnection from "../services/BackendStatusService";
 
 const AppBar = () => {
 
 	const navigation: any = useNavigate();
 
 	useEffect (()=> {
+		testBackendConnection();
 		console.log("App bar has rerendered.")
 	});
 
