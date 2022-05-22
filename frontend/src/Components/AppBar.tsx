@@ -9,11 +9,11 @@ const AppBar = () => {
 	const navigation: any = useNavigate();
 
 	useEffect (()=> {
-		testBackendConnection();
 		console.log("App bar has rerendered.")
 	});
 
 	const onClickLanding = () => {
+		testBackendConnection();
 		navigation(ROUTER_PATHS.landing);
 	}
 

@@ -14,6 +14,7 @@ async function testBackendConnection() {
 		})
 		.catch((error) => {
 			console.log("ERROR: ",error)
+			console.log("Backend test failed.")
 		})
 		.finally(() => {
 			console.log("Attempt complete.")
