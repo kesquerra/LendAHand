@@ -1,9 +1,10 @@
-import httpClient from "./HttpService";
+import BackendClient from "./HttpService";
+
 
 
 export async function testBackendStatus() {
 	console.log("Attempting to check backend status.")
-	httpClient.get("/api/status")
+		BackendClient.get("/api/status")
 	.then((response) => {
 		console.log("GET /api/Status Response: ",response.status);
 		if(response.status === 200){
@@ -25,7 +26,7 @@ export async function testBackendStatus() {
 
 export async function testBackendConnection() {
 	console.log("Attempting to connect to the backend.")
-	httpClient.get("/")
+	BackendClient.get("/")
 		.then((response) => {
 			console.log("GET / Response: ",response.status);
 			if(response.status === 200){

@@ -1,6 +1,7 @@
 import { Typography, Box, Paper, Button, Table, TableBody, TableRow, TableCell} from "@mui/material";
 import { LEND } from "../Constants";
 import { LendMock } from "../MockData";
+import getLendItems from "../Services/LendService";
 
 
 interface cardProps {
@@ -67,6 +68,8 @@ const LendPage = () => {
 		imguri: LendMock.Card2.imguri,
 		posted: LendMock.Card2.start_time
 	}
+
+	const lendItems = getLendItems()
 
 	const lendCards: cardProps[] = [mockProps1, mockProps2]
 
