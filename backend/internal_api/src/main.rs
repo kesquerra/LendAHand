@@ -41,17 +41,18 @@ async fn main() -> io::Result<()> {
     db.seed_data().await;
 
     let host = config.host.clone();
+		info!("Running backend at {}:{}", config.host, config.port); // log server start
 
     // start server at HOST:PORT, persisting Db connection
     HttpServer::new(move || {
+
+			let cors = Cors::permissive();
         
-        let cors = Cors::permissive();
-        
-        App::new()
-            .app_data(web::Data::new(SessionData {db: db.clone()}))
-            .wrap(cors)
-            .service(test)
-            .service(api::config())
+			App::new()
+					.app_data(web::Data::new(SessionData {db: db.clone()}))
+					.wrap(cors)
+					.service(test)
+					.service(api::config())
     })
     .bind((config.host, config.port))?
     .run()
