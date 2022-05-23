@@ -34,4 +34,7 @@ The API documentation has also been updated to contain the available routes.
 | Adam Taitano | `DevOps` | 
 | -- | -- |
 
+My primary focus this week, although not demonstrated in commits, has been to figure out how to fully deploy our final project. Last week I failed at deploying our frontend as a static page via GitHub Pages, despite being able to demonstrate it on my own cloned test-repo (I am thinking it might have to do with permissions). Instead of worrying about this temporary measure, I chose our final deployment strategy: use GitHub Actions and docker-compose to build and push docker images of each component (backend, frontend, microservices x 3) to DigitalOcean's Container Registry, and deploy these images to Droplets. We have claimed our domain ('lendahand.ninja'), and I am hopeful it will all come together by the end of this term.
+We created a new GitHub organization with a cloned repo to work on from now on, so that everyone has the ability to modify settings, actions and secrets.
+Additionally, I am working on a minimally functional CRUD backend for my chat-service. 
 
