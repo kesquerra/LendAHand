@@ -46,7 +46,7 @@ async fn main() -> io::Result<()> {
     // start server at HOST:PORT, persisting Db connection
     HttpServer::new(move || {
 
-				let cors = Cors::permissive();
+			let cors = Cors::permissive();
         
         App::new()
             .app_data(web::Data::new(SessionData {db: db.clone()}))
