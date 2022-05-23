@@ -13,7 +13,7 @@ jobs:
   build:
     defaults:
       run:
-        working-directory: backend/internal_api
+        working-directory: backend/api
     runs-on: ubuntu-latest
   
     steps:

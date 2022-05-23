@@ -1,2 +1,3 @@
-/backend/internal_api/target/
+/backend/api/target/
+/backend/api/.env.docker
 .env

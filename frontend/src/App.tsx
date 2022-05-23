@@ -8,13 +8,21 @@ import RequestPage from './Components/RequestPage';
 import LoginPage from './Components/LoginPage';
 import ProfilePage from './Components/ProfilePage';
 import { ROUTER_PATHS } from './Constants';
-
 import "../public/lendahand.css";
+import { useEffect } from 'react';
+import { testBackendConnection, testBackendStatus } from './services/BackendStatusService';
 
 
 
 
 function App() {
+
+	useEffect(()=> {
+		console.log("AppBar first Render")
+		testBackendConnection()
+		testBackendStatus()
+	},[])
+
 
 	const Page = () => {
 		return(
