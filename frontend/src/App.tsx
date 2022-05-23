@@ -10,7 +10,7 @@ import ProfilePage from './Components/ProfilePage';
 import { ROUTER_PATHS } from './Constants';
 import "../public/lendahand.css";
 import { useEffect } from 'react';
-import { testBackendConnection, testBackendStatus } from './services/BackendStatusService';
+import { testBackendConnection, testBackendStatus } from './Services/BackendStatusService';
 
 
 

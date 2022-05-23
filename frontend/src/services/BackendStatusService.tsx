@@ -3,10 +3,10 @@ import BackendClient from "./HttpService";
 
 
 export async function testBackendStatus() {
-	console.log("Attempting to check backend status.")
+	console.log(">>>>> Attempting to check backend status.")
 		BackendClient.get("/api/status")
 	.then((response) => {
-		console.log("GET /api/Status Response: ",response.status);
+		console.log("----- GET /api/Status Response: ",response.status);
 		if(response.status === 200){
 			console.log("Status obtained.")
 			console.log("Payload: ",response.data)
@@ -19,16 +19,16 @@ export async function testBackendStatus() {
 		console.log("Backend status test failed.")
 	})
 	.finally(() => {
-		console.log("Atempt to check backend status complete.")
+		console.log("<<<<< Atempt to check backend status complete.")
 	})
 }
 
 
 export async function testBackendConnection() {
-	console.log("Attempting to connect to the backend.")
+	console.log(">>>>> Attempting to connect to the backend.")
 	BackendClient.get("/")
 		.then((response) => {
-			console.log("GET / Response: ",response.status);
+			console.log("----- GET / Response: ",response.status);
 			if(response.status === 200){
 				console.log("Successful connection")
 				console.log("Payload: ",response.data)
@@ -41,6 +41,6 @@ export async function testBackendConnection() {
 			console.log("Backend test failed.")
 		})
 		.finally(() => {
-			console.log("Attempt to connect to the backend complete.")
+			console.log("<<<<< Attempt to connect to the backend complete.")
 		})
 }
