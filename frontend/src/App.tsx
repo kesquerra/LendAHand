@@ -19,8 +19,8 @@ function App() {
 
 	useEffect(()=> {
 		console.log("AppBar first Render")
-			testBackendConnection()
-			testBackendStatus()
+		testBackendConnection()
+		testBackendStatus()
 	},[])
 
 
