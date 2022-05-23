@@ -48,11 +48,11 @@ async fn main() -> io::Result<()> {
 
 			let cors = Cors::permissive();
         
-        App::new()
-            .app_data(web::Data::new(SessionData {db: db.clone()}))
-            .wrap(cors)
-            .service(test)
-            .service(api::config())
+			App::new()
+					.app_data(web::Data::new(SessionData {db: db.clone()}))
+					.wrap(cors)
+					.service(test)
+					.service(api::config())
     })
     .bind((config.host, config.port))?
     .run()
