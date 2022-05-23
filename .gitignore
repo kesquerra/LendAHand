@@ -1,3 +1,4 @@
 /backend/api/target/
 /backend/api/.env.docker
+/backend/internal_api/target
 .env
