@@ -16,6 +16,11 @@ This week we added components to the web application, to include API routes, fro
 | Taylor Noah | `Frontend` |
 | -- | -- |
 
+I started this week by adding a basic rendered page to all the links the appbar has buttons for (Lend, Request, Profile, Login). I met with Casey and Katherine to laern how to
+smoothly navigate between pages and use a background image that is consistant across all pages. I created a layout and Card system for the Lend page which displays all Lend
+Item's information. Currently is uses local mock data. In effort to move away from local mock data and use backend mock data I implemented an httpService and
+a backendStatusService. The former connects to the backend and the latter logs information to the console to confirm the connection on app start.
+
 
 
 | Kyle Esquerra | `Backend` | 
