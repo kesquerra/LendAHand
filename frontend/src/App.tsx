@@ -10,7 +10,8 @@ import ProfilePage from './Components/ProfilePage';
 import { ROUTER_PATHS } from './Constants';
 import "../public/lendahand.css";
 import { useEffect } from 'react';
-import { testBackendConnection, testBackendStatus } from './services/BackendStatusService';
+import { testBackendConnection, testBackendStatus } from './Services/BackendStatusService';
+import CreateUserPage from './Components/CreateUserPage';
 
 
 
@@ -38,6 +39,7 @@ function App() {
 	const lendPage = <LendPage/>
 	const requestPage = <RequestPage/>
 	const loginPage = <LoginPage/>
+	const createUserPage = <CreateUserPage/>
 	const profilePage = <ProfilePage/>
 
   return (
@@ -51,6 +53,7 @@ function App() {
 							<Route path={ROUTER_PATHS.lend} element={lendPage}/>
 							<Route path={ROUTER_PATHS.request} element={requestPage}/>
 							<Route path={ROUTER_PATHS.login} element={loginPage}/>
+							<Route path={ROUTER_PATHS.createUser} element={createUserPage}/>
 							<Route path={ROUTER_PATHS.profile} element={profilePage}/>
 
 					</Route>

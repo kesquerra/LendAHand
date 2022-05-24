@@ -6,6 +6,7 @@ export const ROUTER_PATHS = {
 	request: '/request',
 	login: '/login',
 	profile: '/profile',
+	createUser: '/create-user',
 	error: '*'
 }
 
