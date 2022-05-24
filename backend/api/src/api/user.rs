@@ -2,8 +2,10 @@
 
 use actix_web::{web, get, post, delete, Scope, HttpResponse, Responder};
 use crate::models::user::{test_users, User};
+use crate::models::auth::AuthUser;
 use crate::SessionData;
 use crate::api::{log_api, HttpError};
+use bcrypt::{DEFAULT_COST, hash};
 
 static USER_PREFIX:&str = "/user";
 
@@ -35,11 +37,12 @@ async fn all_users(data: web::Data<SessionData>) -> impl Responder {
 }
 
 #[post("")]
-async fn create_user(data: web::Data<SessionData>, user_json: web::Json<User>) -> impl Responder {
+async fn create_user(data: web::Data<SessionData>, user_json: web::Json<AuthUser>) -> impl Responder {
     log_user("POST", "");
-    let user: User = user_json.into_inner();
-    user.to_db(&data.db).await;
-    HttpResponse::Created().json(user)
+    let mut user: AuthUser = user_json.into_inner();
+    user.password = hash(user.password, DEFAULT_COST).unwrap();
+    data.db.new_user(user.username.clone(), user.password).await;
+    HttpResponse::Created().json(User::from_db_by_username(&data.db, user.username).await)
 } 
 
 #[get("/{id}")]
@@ -59,6 +62,7 @@ async fn user_by_id(data: web::Data<SessionData>, id: web::Path<String>) -> impl
     }
 }
 
+
 #[delete("/{id}")]
 async fn delete_user_by_id(data: web::Data<SessionData>, id: web::Path<String>) -> impl Responder {
     let id_int = id.into_inner();
@@ -72,3 +76,4 @@ async fn delete_user_by_id(data: web::Data<SessionData>, id: web::Path<String>) 
         })
     }
 }
+

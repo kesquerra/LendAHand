@@ -6,7 +6,7 @@ mod api;
 mod config;
 mod db;
 
-use actix_web::{get, App, web, HttpResponse, HttpServer, Responder, http};
+use actix_web::{get, App, web, HttpResponse, HttpServer, Responder};
 use actix_cors::Cors;
 use std::io;
 

@@ -82,6 +82,20 @@ impl Db {
         }
     }
 
+    pub async fn new_user(&self, username:String, password:String) {
+        let q = format!("INSERT INTO users VALUES ('{}', '{}');", username, password);
+        match &self.pool {
+            Some(pool) => {
+                match sqlx::query(&q)
+                .execute(&*pool).await {
+                    Ok(_) => info!("User created."),
+                    Err(e) => warn!("User creation error: {}", e)
+                }
+            }
+            None => warn!("No database connections exist.")
+        }
+    }
+
     pub async fn get_users(self) -> Option<Vec<User>> {
         match self.pool {
             Some(pool) => {
