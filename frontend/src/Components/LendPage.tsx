@@ -1,46 +1,34 @@
 import { Typography, Box, Paper, Button, Table, TableBody, TableRow, TableCell} from "@mui/material";
+import { useEffect, useState } from "react";
 import { LEND } from "../Constants";
-import { LendMock } from "../MockData";
-import getLendItems from "../Services/LendService";
+import {getLendItems} from "../Services/LendService";
+import { ItemType } from "../Types/types";
 
 
-interface cardProps {
-	key: number,
-	item: string,
-	posted: string,
-	lend_time: string,
-	lender: string,
-	imguri?: string
-}
 
-
-const ItemCard = (props: cardProps) => {
+const ItemCard = (props: ItemType) => {
 
 	return(
 		<>
 			<Box  sx={{ p:1, border: '1px solid', borderRadius: '10px'	}} >
 				<Box display='flex'>
 					<Box>
-						<img alt='lend-card-img' width={200} height={200} src={props.imguri}/>
+						<img alt='lend-card-img' width={200} height={200} src={props.img_uri}/>
 					</Box>
 					<Box sx={{flexGrow: 1}} ml={2} mr={2} width={1}>
 						<Table>
 							<TableBody>
 								<TableRow>
 									<TableCell width={1} align='left'><Typography variant='h5'>Item: </Typography></TableCell>
-									<TableCell align='left'><Typography variant='h5'>{props.item}</Typography></TableCell>
-								</TableRow>
-								<TableRow>
-									<TableCell width={1} align='left'><Typography variant='h5'>Time: </Typography></TableCell>
-									<TableCell align='left'><Typography variant='h5'>{props.lend_time}</Typography></TableCell>
+									<TableCell align='left'><Typography variant='h5'>{props.name}</Typography></TableCell>
 								</TableRow>
 								<TableRow>
 									<TableCell width={1} align='left'><Typography variant='h5'>Posted: </Typography></TableCell>
-									<TableCell align='left'><Typography variant='h5'>{props.posted}</Typography></TableCell>
+									<TableCell align='left'><Typography variant='h5'>{props.lend_start.slice(0,10)}</Typography></TableCell>
 								</TableRow>
 								<TableRow>
-									<TableCell width={1} align='left'><Typography variant='h5'>Lender: </Typography></TableCell>
-									<TableCell align='left'><Typography variant='h5'>{props.lender}</Typography></TableCell>
+									<TableCell width={1} align='left'><Typography variant='h5'>End: </Typography></TableCell>
+									<TableCell align='left'><Typography variant='h5'>{props.lend_end.slice(0,10)}</Typography></TableCell>
 								</TableRow>
 							</TableBody>
 						</Table>
@@ -57,26 +45,25 @@ const ItemCard = (props: cardProps) => {
 }
 
 const LendPage = () => {
-	const mockProps1 = {
-		item: LendMock.Card1.name,
-		lend_time: LendMock.Card1.end_time,
-		lender: LendMock.Card1.lender,
-		imguri: LendMock.Card1.imguri,
-		posted: LendMock.Card1.start_time
-	}
+	let [lendItems, setLendItems] = useState([]);
 
-	const mockProps2 = {
-		item: LendMock.Card2.name,
-		lend_time: LendMock.Card2.end_time,
-		lender: LendMock.Card2.lender,
-		imguri: LendMock.Card2.imguri,
-		posted: LendMock.Card2.start_time
-	}
+	useEffect(() => {
+		getLendItems()
+			.then(res => {
+				setLendItems(res.data)
+			})
+	},[])
 
-	const lendItems = getLendItems()
-	console.log(lendItems)
+	console.log("Lend Items: {}",lendItems)
 
-	const lendCards = [mockProps1, mockProps2]
+
+	//sort items by start(post) time and then by name
+	// lendItems.sort(
+	// 	(a: any,b: any)=>
+	// 	(a.start_time < b.start_time) 
+	// 		? 1 
+	// 		: ((a.start_time === b.start_time) ? ( (a.name < b.name) ? 1 : -1 ) : -1)
+	// )
 
 	return(
 		<>
@@ -103,7 +90,7 @@ const LendPage = () => {
 						</Button>
 					</Box>
 					<Box sx={{p:2}}>
-						{lendCards.map( (card, index) => (<ItemCard key={index} {...card} />) )}
+						{lendItems.map( (card: any, index: number) => (<ItemCard key={index} {...card} />) )}
 					</Box>
 				</Paper>
 			</Box>
