@@ -8,13 +8,13 @@ COPY ./Cargo.toml ./Cargo.toml
 
 RUN ls
 
-RUN cargo build
-RUN rm src/*.rs
+RUN cargo build --release & rm src/*.rs
 
 COPY ./src ./src
 COPY ./migrations ./migrations
 COPY .env.docker .env
 
+RUN if [-f "./target/release/deps/api*"]; then rm ./target/release/deps/api*; fi;
 RUN cargo install --path .
 
 CMD ["api"]
