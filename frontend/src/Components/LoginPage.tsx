@@ -139,18 +139,15 @@ const LoginPage = () => {
 							</Typography>
 						</Box>
 						{ userExistsError === true &&
-							<>
-								<Box sx={{p:2}} display='flex' justifyContent='center'>
-									<Typography variant='subtitle1' color='error'>
-										{userErrorMessage}
-									</Typography>
-								</Box>
-								<Box sx={{p:2}} display='flex' justifyContent='center'>
-									<Button variant="contained" onClick={handleCreateUserClick}>Create New User</Button>
-								</Box>
-							</>
+							<Box sx={{p:2}} display='flex' justifyContent='center'>
+								<Typography variant='subtitle1' color='error'>
+									{userErrorMessage}
+								</Typography>
+							</Box>
 						}
-						
+						<Box sx={{p:2}} display='flex' justifyContent='center'>
+							<Button variant="contained" onClick={handleCreateUserClick}>Create New User</Button>
+						</Box>
 						<form onSubmit={handleSubmit}>
 							<Box sx={{p:2}} display='flex' justifyContent='center' flexDirection={'column'}>
 
