@@ -1,6 +1,7 @@
 import { Typography, Box, Paper, Button, Table, TableBody, TableRow, TableCell} from "@mui/material";
 import { useEffect, useState } from "react";
-import { LEND } from "../Constants";
+import { useNavigate } from "react-router-dom";
+import { LEND, ROUTER_PATHS } from "../Constants";
 import {getLendItems} from "../Services/LendService";
 import { ItemType } from "../Types/types";
 
@@ -47,6 +48,8 @@ const ItemCard = (props: ItemType) => {
 const LendPage = () => {
 	let [lendItems, setLendItems] = useState([]);
 
+	const navigation: any = useNavigate();
+
 	useEffect(() => {
 		getLendItems()
 			.then(res => {
@@ -57,13 +60,10 @@ const LendPage = () => {
 	console.log("Lend Items: {}",lendItems)
 
 
-	//sort items by start(post) time and then by name
-	// lendItems.sort(
-	// 	(a: any,b: any)=>
-	// 	(a.start_time < b.start_time) 
-	// 		? 1 
-	// 		: ((a.start_time === b.start_time) ? ( (a.name < b.name) ? 1 : -1 ) : -1)
-	// )
+	const handleLendItemClick = () => {
+		navigation(ROUTER_PATHS.createLendItem)
+	}
+
 
 	return(
 		<>
@@ -85,7 +85,7 @@ const LendPage = () => {
 						<Typography sx={{textDecoration: 'underline'}} variant='h4' color='primary'>
 							Items ready to be lent!
 						</Typography>
-						<Button size='medium' sx={{ml: 5}} variant='contained' color='success'>
+						<Button size='medium' sx={{ml: 5}} variant='contained' color='success' onClick={handleLendItemClick}>
 							<Typography variant='h6' sx={{textTransform: 'none'}}>Lend an Item</Typography>
 						</Button>
 					</Box>
