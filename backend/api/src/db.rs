@@ -103,7 +103,7 @@ impl Db {
     pub async fn get_items(&self) -> Option<Vec<Item>> {
         match &self.pool {
             Some(pool) => {
-                match sqlx::query_as::<_, Item>("SELECT * FROM items").fetch_all(&*pool).await {
+                match sqlx::query_as::<_, Item>("SELECT * FROM items i JOIN user_items ui ON ui.item_id = i.id").fetch_all(&*pool).await {
                     Ok(rows) => Some(rows),
                     Err(err) => {
                         warn!("Database query error: {}", err);

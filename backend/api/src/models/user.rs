@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 use sqlx::{FromRow};
 use crate::db::Db;
+use crate::models::item::Item;
 
 
 #[derive(Serialize, Deserialize, FromRow)]
@@ -64,6 +65,25 @@ impl User {
                     }
                 }
             }
+            None => {
+                warn!("No database connections exist.");
+                None
+            }
+        }
+    }
+
+    pub async fn get_items(&self, db: &Db) -> Option<Vec<Item>> {
+        match &db.pool {
+            Some(pool) => {
+                match sqlx::query_as::<_, Item>(&format!("SELECT * FROM items i JOIN user_items ui ON ui.item_id = i.id WHERE ui.owner_id = {}", self.id.unwrap()))
+                .fetch_all(*&pool).await {
+                    Ok(items) => Some(items),
+                    Err(e) => {
+                        warn!("Database query error: {}", e);
+                        None
+                    }
+                }
+            },
             None => {
                 warn!("No database connections exist.");
                 None

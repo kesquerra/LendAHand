@@ -3,6 +3,7 @@ pub mod item;
 pub mod auth;
 
 use actix_web::{web, get, Scope, HttpResponse, Responder};
+use actix_files::NamedFile;
 use serde::{Serialize, Deserialize};
 use crate::logger;
 use crate::SessionData;
@@ -26,6 +27,7 @@ struct HttpError {
 pub fn config() -> Scope {
     web::scope(PREFIX)
         .service(status)
+        .service(docs)
         .service(api::user::config())
         .service(api::item::config())
         .service(api::auth::config())
@@ -34,6 +36,11 @@ pub fn config() -> Scope {
 // helper to log api routes reached
 pub fn log_api(method:&str, route:&str) {
     logger::route(method, PREFIX, route);
+}
+
+#[get("")]
+async fn docs() -> impl Responder {
+    NamedFile::open_async("README.md").await
 }
 
 #[get("/status")] // api base page
