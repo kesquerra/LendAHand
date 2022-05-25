@@ -21,8 +21,8 @@ async fn authenticate_user(data: web::Data<SessionData>, user_json: web::Json<Us
             if valid {
                 HttpResponse::Ok().json(user)
             } else {
-                HttpResponse::NotFound().json(HttpError {
-                    status_code: 404,
+                HttpResponse::BadRequest().json(HttpError {
+                    status_code: 400,
                     message: "password incorrect".to_string()
                 })
             }
