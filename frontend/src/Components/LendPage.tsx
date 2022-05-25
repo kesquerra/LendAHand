@@ -2,7 +2,7 @@ import { Typography, Box, Paper, Button, Table, TableBody, TableRow, TableCell} 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LEND, ROUTER_PATHS } from "../Constants";
-import {getLendItems} from "../Services/LendService";
+import {getLendItems} from "../services/LendService";
 import { ItemType } from "../Types/types";
 
 
