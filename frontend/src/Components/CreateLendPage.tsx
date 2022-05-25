@@ -127,7 +127,7 @@ const CreateLendPage = () => {
 			setDaysErrorMsg("Field is required.")
 			isValid = false
 		} else {
-			if(isAlpha(formValues.days) || Number(formValues) < 0){
+			if(isAlpha(formValues.days) || Number(formValues.days) < 0){
 				setDaysError(true)
 				setDaysErrorMsg("Must be a number greater than 0.")
 				isValid = false
