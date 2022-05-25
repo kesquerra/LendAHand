@@ -4,14 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { ROUTER_PATHS } from "../Constants";
 import { ItemType } from "../Types/types";
 
-
+// after user is logged in owner_id autofilled
 const defaultItem: ItemType = {
-	id: -1,
+	owner_id: -1,
 	name: '',
 	lend_start: '',
 	lend_end: '',
-	img_uri: '',
-	is_lent_item: true
+	img_uri: ''
 }
 
 const defaultFormValues = {
