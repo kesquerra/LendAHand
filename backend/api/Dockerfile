@@ -1,20 +1,20 @@
 FROM rust:latest
 
-RUN USER=root cargo new --bin api
 WORKDIR /api
 
-COPY ./Cargo.lock ./Cargo.lock
+RUN echo "fn main() {}" > dummy.rs
 COPY ./Cargo.toml ./Cargo.toml
 
-RUN ls
+RUN sed -i 's#src/main.rs#dummy.rs#' Cargo.toml
 
-RUN cargo build --release & rm src/*.rs
+RUN cargo build --release
+
+RUN sed -i 's#dummy.rs#src/main.rs#' Cargo.toml
 
 COPY ./src ./src
 COPY ./migrations ./migrations
 COPY .env.docker .env
 
-RUN if [-f "./target/release/deps/api*"]; then rm ./target/release/deps/api*; fi;
-RUN cargo install --path .
+RUN cargo build --release
 
-CMD ["api"]
+CMD ["target/release/api"]
