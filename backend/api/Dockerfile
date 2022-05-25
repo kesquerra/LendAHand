@@ -1,10 +1,19 @@
 FROM rust:latest
 
-WORKDIR /backend/api
-COPY . .
+RUN USER=root cargo new --bin api
+WORKDIR /api
 
-RUN mv .env.docker .env
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./Cargo.toml ./Cargo.toml
 
+RUN cargo build --release & rm src/*.rs
+RUN rm -f target/release/deps/api*
+
+COPY ./src ./src
+COPY ./migrations ./migrations
+COPY .env.docker .env
+
+RUN cargo build --release
 RUN cargo install --path .
 
-CMD ["lah_api"]
+CMD ["api"]
