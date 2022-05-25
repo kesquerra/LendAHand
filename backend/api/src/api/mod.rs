@@ -40,7 +40,7 @@ pub fn log_api(method:&str, route:&str) {
 
 #[get("")]
 async fn docs() -> impl Responder {
-    NamedFile::open_async("README.md").await
+    NamedFile::open("./README.html")
 }
 
 #[get("/status")] // api base page
