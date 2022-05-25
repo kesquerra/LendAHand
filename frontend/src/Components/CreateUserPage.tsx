@@ -1,8 +1,10 @@
-import { Typography, Box, TextField, Paper, Container, Button } from "@mui/material"
-import { useState } from 'react';
 import React from 'react'
+import { useState } from 'react';
+import { Typography, Box, TextField, Paper, Container, Button } from "@mui/material"
+
 import {LOGIN} from '../Constants'
 import { UserType } from "../Types/types";
+import LoginPage from './LoginPage';
 
 
 const default_form_values: UserType = {
@@ -11,41 +13,28 @@ const default_form_values: UserType = {
 }
 
 
+// Typed error states for inputs
+interface errorState {
+	error: boolean,
+	msg: string
+}
+const errorStateFalse: errorState = {
+	error: false,
+	msg: ""
+}
+const errorStateTrue: errorState = {
+	error: true,
+	msg: LOGIN.HelperText
+}
+
 const CreateUserPage = () => {
 
 	let [infoState, setInfoState] = useState(default_form_values);
 	let [hasSubmit, setHasSubmit] = useState(false);
 
-	let [emailError, setEmailError] = useState(false);
-	let [passwordError, setPasswordError] = useState(false);
+	let [emailErrorState, setEmailErrorState] = useState(errorStateFalse)
+	let [passwordErrorState, setPasswordErrorState] = useState(errorStateFalse)
 
-	let [emailHelperText, setEmailHelperText] = useState("")
-	let [passwordHelperText, setPasswordHelperText] = useState("")
-
-
-	const isValidSubmit = (email: string, password: string): Boolean => {
-		let isValid = true;
-
-		if(email === default_form_values.email) {
-			setEmailError(true);
-			setEmailHelperText(LOGIN.HelperText);
-			isValid = false;
-		} else {
-			setEmailError(false);
-			setEmailHelperText('');
-		}
-
-		if(password === default_form_values.password) {
-			setPasswordError(true);
-			setPasswordHelperText(LOGIN.HelperText);
-			isValid = false;
-		} else {
-			setPasswordError(false);
-			setPasswordHelperText('');
-		}
-
-		return isValid;
-	}
 
 	const handleSubmit = (event: any) => {
 		event.preventDefault();
@@ -72,12 +61,32 @@ const CreateUserPage = () => {
 		}
 	}
 
-	
+
+	const isValidSubmit = (email: string, password: string): Boolean => {
+		let isValid = true;
+		
+		if(email === default_form_values.email) {
+			setEmailErrorState(errorStateTrue)
+			isValid = false;
+		} else {
+			setEmailErrorState(errorStateFalse)
+		}
+
+		if(password === default_form_values.password) {
+			setPasswordErrorState(errorStateTrue)
+			isValid = false;
+		} else {
+			setPasswordErrorState(errorStateFalse)
+		}
+
+		return isValid;
+	}
+
 	const SubmitReply = () => {
 		if(hasSubmit){
 			return(
 				<Box mt={10} display='flex' justifyContent='center'>
-					<Typography variant='h6'>Created new user: {infoState.email}</Typography>
+					<Typography variant='h6'>Welcome, {infoState.email}, to Lend a Hand!</Typography>
 				</Box>
 			)
 		}
@@ -101,8 +110,8 @@ const CreateUserPage = () => {
 
 									<TextField
 									
-										error={emailError}
-										helperText={emailHelperText}
+										error={emailErrorState.error}
+										helperText={emailErrorState.msg}
 										id = 'user-email'
 										variant = 'filled'
 										label = '*Email'
@@ -110,8 +119,8 @@ const CreateUserPage = () => {
 
 								<TextField
 									
-									error={passwordError}
-									helperText={passwordHelperText}
+									error={passwordErrorState.error}
+									helperText={passwordErrorState.msg}
 									sx={{mt:2}}
 									id = 'user-password'
 									variant = 'filled'
