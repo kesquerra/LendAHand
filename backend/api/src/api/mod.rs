@@ -1,5 +1,6 @@
 pub mod user;
 pub mod item;
+pub mod auth;
 
 use actix_web::{web, get, Scope, HttpResponse, Responder};
 use serde::{Serialize, Deserialize};
@@ -27,6 +28,7 @@ pub fn config() -> Scope {
         .service(status)
         .service(api::user::config())
         .service(api::item::config())
+        .service(api::auth::config())
 }
 
 // helper to log api routes reached

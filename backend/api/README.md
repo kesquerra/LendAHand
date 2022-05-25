@@ -51,7 +51,6 @@
 > ### Request Example:
 > > ```
 > > {
-> >     "id": 3,
 > >     "username": "db_createduser1",
 > >     "password": "db_password1"
 > > }
@@ -159,4 +158,23 @@
 > ### Response Example:
 > > ```
 > > Status Code: 204
+> > ```
+
+## POST /api/auth
+> ### Request Example:
+> > ```
+> > {
+> >     "username": "db_createduser1",
+> >     "password": "db_password1"
+> > }
+> > ```
+> ### Response Example:
+> > ```
+> > Status Code: 200
+> >
+> > {
+> >     "id": 3,
+> >     "username": "db_createduser1",
+> >     "password": "db_password1"
+> > }
 > > ```

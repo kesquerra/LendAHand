@@ -6,7 +6,7 @@ use crate::db::Db;
 
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Item {
-    id: i32,
+    id: Option<i32>,
     name: String,
     is_lent_item: bool,
     img_uri: String,
@@ -17,7 +17,7 @@ pub struct Item {
 impl Item {
     pub fn new(id:i32, name:String, is_lent_item:bool, img_uri:String, lend_start:DateTime<Local>, lend_end:DateTime<Local>) -> Self {
         Self {
-            id: id,
+            id: Some(id),
             name: name,
             is_lent_item: is_lent_item,
             img_uri: img_uri,
@@ -27,8 +27,8 @@ impl Item {
     }
 
     pub async fn to_db(&self, db: &Db) {
-        let q = format!("INSERT INTO items VALUES ({}, '{}', {}, '{}', '{}', '{}');",
-        self.id, self.name, self.is_lent_item, self.img_uri, self.lend_start.to_rfc3339(), self.lend_end.to_rfc3339());
+        let q = format!("INSERT INTO items (name, is_lent_item, img_uri, lend_start, lend_end) VALUES ('{}', {}, '{}', '{}', '{}');",
+        self.name, self.is_lent_item, self.img_uri, self.lend_start.to_rfc3339(), self.lend_end.to_rfc3339());
         match &db.pool {
             Some(pool) => {
                 match sqlx::query(&q)

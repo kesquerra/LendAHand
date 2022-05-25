@@ -134,11 +134,21 @@ impl Db {
     pub async fn seed_data(&self) {
         let users = test_users();
         let items = test_items();
-        for user in users {
-            user.to_db(&self).await;
+        match Db::get_users(self.clone()).await {
+            Some(_) => {},
+            None => {
+                for user in users {
+                    user.to_db(&self).await
+                }
+            }
         }
-        for item in items {
-            item.to_db(&self).await;
+        match self.get_items().await {
+            Some(_) => {},
+            None => {
+                for item in items {
+                    item.to_db(&self).await;
+                }
+            }
         }
     }
 }
