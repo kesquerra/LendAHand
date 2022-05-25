@@ -82,20 +82,6 @@ impl Db {
         }
     }
 
-    pub async fn new_user(&self, username:String, password:String) {
-        let q = format!("INSERT INTO users VALUES ('{}', '{}');", username, password);
-        match &self.pool {
-            Some(pool) => {
-                match sqlx::query(&q)
-                .execute(&*pool).await {
-                    Ok(_) => info!("User created."),
-                    Err(e) => warn!("User creation error: {}", e)
-                }
-            }
-            None => warn!("No database connections exist.")
-        }
-    }
-
     pub async fn get_users(self) -> Option<Vec<User>> {
         match self.pool {
             Some(pool) => {
@@ -148,11 +134,21 @@ impl Db {
     pub async fn seed_data(&self) {
         let users = test_users();
         let items = test_items();
-        for user in users {
-            user.to_db(&self).await;
+        match Db::get_users(self.clone()).await {
+            Some(_) => {},
+            None => {
+                for user in users {
+                    user.to_db(&self).await
+                }
+            }
         }
-        for item in items {
-            item.to_db(&self).await;
+        match self.get_items().await {
+            Some(_) => {},
+            None => {
+                for item in items {
+                    item.to_db(&self).await;
+                }
+            }
         }
     }
 }
