@@ -11,6 +11,7 @@ import { ROUTER_PATHS } from './Constants';
 import "../public/lendahand.css";
 import { useEffect } from 'react';
 import { testBackendConnection, testBackendStatus } from './services/BackendStatusService';
+import CreateLendPage from './Components/CreateLendPage';
 
 
 
@@ -36,6 +37,7 @@ function App() {
 	const landingPage = <LandingPage/>
 	const notFound = <NotFound/>
 	const lendPage = <LendPage/>
+	const createLendPage = <CreateLendPage/>
 	const requestPage = <RequestPage/>
 	const loginPage = <LoginPage/>
 	const profilePage = <ProfilePage/>
@@ -49,6 +51,7 @@ function App() {
 				
 							<Route path={ROUTER_PATHS.landing} element={landingPage}/>
 							<Route path={ROUTER_PATHS.lend} element={lendPage}/>
+							<Route path={ROUTER_PATHS.createLendItem} element={createLendPage}/>
 							<Route path={ROUTER_PATHS.request} element={requestPage}/>
 							<Route path={ROUTER_PATHS.login} element={loginPage}/>
 							<Route path={ROUTER_PATHS.profile} element={profilePage}/>
