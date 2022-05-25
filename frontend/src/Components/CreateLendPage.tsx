@@ -1,6 +1,6 @@
 import { Box, Container, Paper, Typography, TextField, Button, Table, TableBody, TableCell, TableRow} from "@mui/material";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ROUTER_PATHS } from "../Constants";
 import { ItemType } from "../Types/types";
 
@@ -65,13 +65,7 @@ const CreateLendPage = () => {
 			console.log("Form Values: {}",formValues);
 
 			const today = new Date()
-			const currentTime = 
-				today.getFullYear().toString()+"-"
-				+(today.getMonth()+1).toString()+"-"
-				+today.getDate().toString()+"T"
-				+today.getHours().toString()+":"
-				+today.getMinutes().toString()+":"
-				+today.getSeconds().toString()
+			const currentTime = today.toISOString()
 			
 			for(let i=0; i<currentTime.length; i++){
 				if(currentTime[i]==='T'){
@@ -81,14 +75,8 @@ const CreateLendPage = () => {
 			}
 
 			today.setDate(today.getDate()+Number(formValues.days))
-			const endTime = 
-				today.getFullYear().toString()+"-"
-				+(today.getMonth()+1).toString()+"-"
-				+today.getDate().toString()+"T"
-				+today.getHours().toString()+":"
-				+today.getMinutes().toString()+":"
-				+today.getSeconds().toString()
-			
+			const endTime = today.toISOString()
+		
 				for(let i=0; i<endTime.length; i++){
 					if(endTime[i]==='T'){
 						setEndIndex(i)
