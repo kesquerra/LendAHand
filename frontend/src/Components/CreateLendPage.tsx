@@ -1,5 +1,7 @@
-import { Box, Container, Paper, Typography, TextField, Button, useEventCallback } from "@mui/material";
+import { Box, Container, Paper, Typography, TextField, Button, Table, TableBody, TableCell, TableRow} from "@mui/material";
 import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { ROUTER_PATHS } from "../Constants";
 import { ItemType } from "../Types/types";
 
 
@@ -19,8 +21,15 @@ const defaultFormValues = {
 
 const CreateLendPage = () => {
 
+	const navigation: any = useNavigate();
+
 	let [formValues, setFormValues] = useState(defaultFormValues)
 	let [item, setItem] = useState(defaultItem)
+
+	let [isCreated, setIsCreated] = useState(false)
+	let [title, setTitle] = useState("Create a Lend Item")
+	let [startIndex, setStartIndex] = useState(0)
+	let [endIndex, setEndIndex] = useState(0)
 
 	let [nameError, setNameError] = useState(false)
 	let [nameErrorMsg, setNameErrorMsg] = useState("")
@@ -32,6 +41,11 @@ const CreateLendPage = () => {
 	useEffect(()=>{
 		console.log("New item specs: {}",item)
 	},[item])
+
+
+	const onClickGoBack = () => {
+		navigation(ROUTER_PATHS.lend)
+	}
 
 
 	const handleInputChange = (event: any) => {
@@ -58,6 +72,13 @@ const CreateLendPage = () => {
 				+today.getHours().toString()+":"
 				+today.getMinutes().toString()+":"
 				+today.getSeconds().toString()
+			
+			for(let i=0; i<currentTime.length; i++){
+				if(currentTime[i]==='T'){
+					setStartIndex(i)
+					break
+				}
+			}
 
 			today.setDate(today.getDate()+Number(formValues.days))
 			const endTime = 
@@ -67,6 +88,13 @@ const CreateLendPage = () => {
 				+today.getHours().toString()+":"
 				+today.getMinutes().toString()+":"
 				+today.getSeconds().toString()
+			
+				for(let i=0; i<endTime.length; i++){
+					if(endTime[i]==='T'){
+						setEndIndex(i)
+						break
+					}
+				}
 
 			setItem({
 				...item,
@@ -74,6 +102,8 @@ const CreateLendPage = () => {
 				lend_start: currentTime,
 				lend_end: endTime
 			})
+			setIsCreated(true)
+			setTitle("Here is your Lend Item!")
 		}
 	}
 
@@ -117,13 +147,21 @@ const CreateLendPage = () => {
 				<Paper elevation={6}>
 					<Box sx={{p:2}} display='flex' justifyContent='center'>
 						<Typography variant='h4'>
-							Create a Lend Item
+							{title}
 						</Typography>
 					</Box>
-					<form onSubmit={(handleSubmit)}>
-						<Box sx={{p:2}} display='flex' justifyContent='center' flexDirection={'column'}>
-
+					{ isCreated &&
+						<Box sx={{p:2}} display='flex' justifyContent='center'>
+							<Typography variant='subtitle1'>
+								Click 'Go Back'
+							</Typography>
+						</Box>			
+					}
+					<Box sx={{p:2}} display='flex' justifyContent='center' flexDirection={'column'}>
+						{isCreated===false &&
+							<form onSubmit={(handleSubmit)}>
 								<TextField
+									fullWidth
 									error={nameError}
 									helperText={nameErrorMsg}
 									onChange={handleInputChange}
@@ -133,6 +171,7 @@ const CreateLendPage = () => {
 									type='text'
 								/>
 								<TextField
+									fullWidth
 									error={daysError}
 									helperText={daysErrorMsg}
 									onChange={handleInputChange}
@@ -141,14 +180,41 @@ const CreateLendPage = () => {
 									variant = 'filled'
 									label = '*Days willing to lend'
 								/>
-
-							<Box display='flex'>
 								<Button fullWidth sx={{mt:2}} variant='contained' type='submit' value='Submit'>Submit</Button>
-								<Button fullWidth sx={{mt:2}} variant='contained'>Go Back</Button>
+							</form>
+						}
+						{isCreated &&
+							<Box  sx={{ p:1, border: '1px solid', borderRadius: '10px'	}} >
+							<Box display='flex'>
+								<Box>
+									<img alt='lend-card-img' width={200} height={200} src={item.img_uri}/>
+								</Box>
+								<Box sx={{flexGrow: 1}} ml={2} mr={2} width={1}>
+									<Table>
+										<TableBody>
+											<TableRow>
+												<TableCell width={1} align='left'><Typography variant='h5'>Item: </Typography></TableCell>
+												<TableCell align='left'><Typography variant='h5'>{item.name}</Typography></TableCell>
+											</TableRow>
+											<TableRow>
+												<TableCell width={1} align='left'><Typography variant='h5'>Posted: </Typography></TableCell>
+												<TableCell align='left'><Typography variant='h5'>{item.lend_start.slice(0,endIndex)}</Typography></TableCell>
+											</TableRow>
+											<TableRow>
+												<TableCell width={1} align='left'><Typography variant='h5'>End: </Typography></TableCell>
+												<TableCell align='left'><Typography variant='h5'>{item.lend_end.slice(0,startIndex)}</Typography></TableCell>
+											</TableRow>
+										</TableBody>
+									</Table>
+								</Box>	
 							</Box>
-							
 						</Box>
-					</form>
+						}
+						<Box display='flex' justifyContent='center'>
+							<Button sx={{mt:2}} variant='contained' onClick={onClickGoBack}>Go Back</Button>
+						</Box>
+						
+					</Box>
 				</Paper>
 			</Container>
 		</Box>
