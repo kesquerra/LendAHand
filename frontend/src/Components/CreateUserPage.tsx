@@ -112,7 +112,7 @@ const CreateUserPage = () => {
 	return(
 		<>
 			<Box mt={30} display='flex' justifyContent='center'>
-				<Container maxWidth='sm'>
+				<Container maxWidth='xs'>
 					<Paper elevation={6}>
 						{submitted === false && 
 						<>
@@ -157,12 +157,12 @@ const CreateUserPage = () => {
 						<>
 							<Box sx={{p:2}} display='flex' justifyContent='center'>
 								<Typography variant='h3'>
-									Created new user:
+									Success!
 								</Typography>
 							</Box>
 							<Box sx={{p:2}} display='flex' justifyContent='center'>
 								<Typography variant='h4'>
-									{user.username}
+									Welcome {user.username}!
 								</Typography>
 							</Box>
 							<Box sx={{p:2}} display='flex' justifyContent='center'>
