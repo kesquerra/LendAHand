@@ -4,11 +4,12 @@ import { Typography, Box, TextField, Paper, Container, Button } from "@mui/mater
 
 import {LOGIN} from '../Constants'
 import { UserType } from "../Types/types";
-import LoginPage from './LoginPage';
+import { UserService } from '../services/UserService';
+
 
 
 const default_form_values: UserType = {
-	email: '',
+	username: '',
 	password: ''
 }
 
@@ -26,53 +27,63 @@ const errorStateTrue: errorState = {
 	error: true,
 	msg: LOGIN.HelperText
 }
+const errorUsernameAlreadyExists: errorState = {
+	error: true,
+	msg: LOGIN.UsernameAlreadyExists
+}
 
 const CreateUserPage = () => {
 
-	let [infoState, setInfoState] = useState(default_form_values);
-	let [hasSubmit, setHasSubmit] = useState(false);
+	let [user, setUser] = useState(default_form_values);
+	const [submitted, setSubmitted] = useState(false);
 
-	let [emailErrorState, setEmailErrorState] = useState(errorStateFalse)
+	let [usernameErrorState, setUsernameErrorState] = useState(errorStateFalse)
 	let [passwordErrorState, setPasswordErrorState] = useState(errorStateFalse)
+
+
+	const handleInputChange = (event: any) => {
+    const {
+  		id,
+      value
+    } = event.target;
+    setUser({
+      ...user,
+      [id]: value
+    });
+  };
 
 
 	const handleSubmit = (event: any) => {
 		event.preventDefault();
-		const email = event.target[0].value
-		const password = event.target[1].value
 
-		if(isValidSubmit(email, password)){
-
-			console.log(event.target[0].value);
-			console.log(event.target[1].value);
-
-			let newInfo: UserType = {
-					email: event.target[0].value,
-					password: event.target[1].value
-				}
-			
-	
-			setInfoState(newInfo);
-			setHasSubmit(true);
-
-		} else {
-			setInfoState(default_form_values);
-			setHasSubmit(false);
-		}
+		if(isValidSubmit()){
+				console.log("Creating User with: ",user)
+				UserService.create(user)
+					.then(res => {
+						setSubmitted(true);
+						console.log(res.data);
+					})
+					.catch(e => {
+						setSubmitted(false);
+						setUsernameErrorState(errorUsernameAlreadyExists)
+						console.log("Error creating new user", e);
+					});
+					
+		} 
 	}
 
 
-	const isValidSubmit = (email: string, password: string): Boolean => {
+	const isValidSubmit = (): Boolean => {
 		let isValid = true;
 		
-		if(email === default_form_values.email) {
-			setEmailErrorState(errorStateTrue)
+		if(user.username === default_form_values.username) {
+			setUsernameErrorState(errorStateTrue)
 			isValid = false;
 		} else {
-			setEmailErrorState(errorStateFalse)
+			setUsernameErrorState(errorStateFalse)
 		}
 
-		if(password === default_form_values.password) {
+		if(user.password === default_form_values.password) {
 			setPasswordErrorState(errorStateTrue)
 			isValid = false;
 		} else {
@@ -82,11 +93,12 @@ const CreateUserPage = () => {
 		return isValid;
 	}
 
+
 	const SubmitReply = () => {
-		if(hasSubmit){
+		if(submitted){
 			return(
 				<Box mt={10} display='flex' justifyContent='center'>
-					<Typography variant='h6'>Welcome, {infoState.email}, to Lend a Hand!</Typography>
+					<Typography variant='h6'>Welcome, {user.username}, to Lend a Hand!</Typography>
 				</Box>
 			)
 		}
@@ -110,11 +122,12 @@ const CreateUserPage = () => {
 
 									<TextField
 									
-										error={emailErrorState.error}
-										helperText={emailErrorState.msg}
-										id = 'user-email'
+										error={usernameErrorState.error}
+										helperText={usernameErrorState.msg}
+										id = 'username'
 										variant = 'filled'
-										label = '*Email'
+										label = '*Username'
+										onChange={handleInputChange}
 									/>
 
 								<TextField
@@ -122,9 +135,10 @@ const CreateUserPage = () => {
 									error={passwordErrorState.error}
 									helperText={passwordErrorState.msg}
 									sx={{mt:2}}
-									id = 'user-password'
+									id = 'password'
 									variant = 'filled'
 									label = '*Password'
+									onChange={handleInputChange}
 								/>
 
 								<Box display='flex'>

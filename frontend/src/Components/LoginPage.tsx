@@ -7,8 +7,22 @@ import { useNavigate } from "react-router-dom";
 
 
 const default_form_values: UserType = {
-	email: '',
+	username: '',
 	password: ''
+}
+
+// Typed error states for inputs
+interface errorState {
+	error: boolean,
+	msg: string
+}
+const errorStateFalse: errorState = {
+	error: false,
+	msg: ""
+}
+const errorStateTrue: errorState = {
+	error: true,
+	msg: LOGIN.HelperText
 }
 
 
@@ -16,17 +30,15 @@ const LoginPage = () => {
 
 	const navigation: any = useNavigate();
 
-	let [infoState, setInfoState] = useState(default_form_values);
+	let [user, setUser] = useState(default_form_values)
+
 	let [hasSubmit, setHasSubmit] = useState(false);
 
 	let[userExistsError, setUserExistsError] = useState(false)
-	const userErrorMessage = "Email and Password combination not found."
+	const userErrorMessage = "Username and Password combination not found."
 
-	let [emailError, setEmailError] = useState(false);
-	let [passwordError, setPasswordError] = useState(false);
-
-	let [emailHelperText, setEmailHelperText] = useState("")
-	let [passwordHelperText, setPasswordHelperText] = useState("")
+	let [usernameErrorState, setUsernameErrorState] = useState(errorStateFalse)
+	let [passwordErrorState, setPasswordErrorState] = useState(errorStateFalse)
 
 
 	const handleCreateUserClick = () => {
@@ -34,25 +46,21 @@ const LoginPage = () => {
 	}
 
 
-	const isValidSubmit = (email: string, password: string): Boolean => {
+	const isValidSubmit = (): Boolean => {
 		let isValid = true;
 
-		if(email === default_form_values.email) {
-			setEmailError(true);
-			setEmailHelperText(LOGIN.HelperText);
+		if(user.username === default_form_values.username) {
+			setUsernameErrorState(errorStateTrue)
 			isValid = false;
 		} else {
-			setEmailError(false);
-			setEmailHelperText('');
+			setUsernameErrorState(errorStateFalse)
 		}
 
-		if(password === default_form_values.password) {
-			setPasswordError(true);
-			setPasswordHelperText(LOGIN.HelperText);
+		if(user.password === default_form_values.password) {
+			setPasswordErrorState(errorStateTrue)
 			isValid = false;
 		} else {
-			setPasswordError(false);
-			setPasswordHelperText('');
+			setPasswordErrorState(errorStateFalse)
 		}
 
 		return isValid;
@@ -60,54 +68,29 @@ const LoginPage = () => {
 
 	const handleSubmit = (event: any) => {
 		event.preventDefault();
-		const email = event.target[0].value
-		const password = event.target[1].value
 
-		if(isValidSubmit(email, password)){
-
-			if(doesUserExist(email, password)){
-				console.log(event.target[0].value);
-				console.log(event.target[1].value);
-
-				let newInfo: UserType = {
-						email: event.target[0].value,
-						password: event.target[1].value
-					}
-				
-				setUserExistsError(false);
-				setInfoState(newInfo);
-				setHasSubmit(true);
-
-			} else {
-				setUserExistsError(true);
-				setInfoState(default_form_values);
-				setHasSubmit(false);
-			}
-
-		} else {
-			setUserExistsError(false);
-			setInfoState(default_form_values);
-			setHasSubmit(false);
+		if(isValidSubmit()){
+			console.log(user)
 		}
 	}
 
-	const doesUserExist = (email: string, password: string) => {
-
-		for(let i=0; i<mockDataBaseUsers.length; i++) {
-			if (mockDataBaseUsers[i].email === email && mockDataBaseUsers[i].password === password){
-				return true
-			}
-		}
-
-		return false
-	}
+	const handleInputChange = (event: any) => {
+    const {
+      id,
+      value
+    } = event.target;
+    setUser({
+      ...user,
+      [id]: value
+    });
+  };
 
 	
 	const SubmitReply = () => {
 		if(hasSubmit){
 			return(
 				<Box mt={10} display='flex' justifyContent='center'>
-					<Typography variant='h6'>{LOGIN.SubmitStatement1}{infoState.email}{LOGIN.SubmitStatement2}</Typography>
+					<Typography variant='h6'>{LOGIN.SubmitStatement1}{user.username}{LOGIN.SubmitStatement2}</Typography>
 				</Box>
 			)
 		}
@@ -116,18 +99,6 @@ const LoginPage = () => {
 		return(<Box>{space}</Box>)
 	}
 
-	const mockUser1: UserType = {
-		email: 'test_email_1',
-		password: 'password'
-	}
-
-	const mockUser2: UserType = {
-		email: 'an_email',
-		password: '1337'
-	}
-
-	const mockDataBaseUsers = [mockUser1, mockUser2]
-	
 	return(
 		<>
 			<Box mt={30} display='flex' justifyContent='center'>
@@ -153,21 +124,23 @@ const LoginPage = () => {
 
 									<TextField
 									
-										error={emailError}
-										helperText={emailHelperText}
-										id = 'user-email'
+										error={usernameErrorState.error}
+										helperText={usernameErrorState.msg}
+										id = 'username'
 										variant = 'filled'
-										label = '*Email'
+										label = '*Username'
+										onChange={handleInputChange}
 									/>
 
 								<TextField
 									
-									error={passwordError}
-									helperText={passwordHelperText}
+									error={passwordErrorState.error}
+									helperText={passwordErrorState.msg}
 									sx={{mt:2}}
-									id = 'user-password'
+									id = 'password'
 									variant = 'filled'
 									label = '*Password'
+									onChange={handleInputChange}
 								/>
 
 								<Box display='flex'>

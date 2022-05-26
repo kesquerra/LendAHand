@@ -4,7 +4,9 @@ import BackendClient from "./HttpService";
 
 export const UserService = {
 	async create(user: UserType) {
-		console.log(">>>>> Attempting to client post to create new user: ", user);
-		return BackendClient.post("/api/user", {email: user.email, password: user.password});
+		console.log(">>>>> Attempting POST @ /api/user with: ", user);
+		let res = await BackendClient.post("/api/user", {username: user.username, password: user.password});
+		console.log("<<<<< Attempt to POST @ /api/user finished.");
+		return res
 	}
 }

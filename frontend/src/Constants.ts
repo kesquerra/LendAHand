@@ -50,5 +50,6 @@ export const LOGIN = {
 	SubmitStatement1: 'Welcome ',
 	SubmitStatement2: ' !',
 	Title: 'Login',
-	HelperText: '*Field is required.'
+	HelperText: '*Field is required.',
+	UsernameAlreadyExists: "Username already exists."
 }
