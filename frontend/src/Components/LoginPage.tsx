@@ -1,9 +1,10 @@
 import { Typography, Box, TextField, Paper, Container, Button } from "@mui/material"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react'
 import {LOGIN, ROUTER_PATHS} from '../Constants'
 import { UserType } from "../Types/types";
 import { useNavigate } from "react-router-dom";
+import { UserService } from "../services/UserService";
 
 
 const default_form_values: UserType = {
@@ -26,19 +27,38 @@ const errorStateTrue: errorState = {
 }
 
 
-const LoginPage = () => {
+interface LoginProps {
+	loginUser: (id: number) => void
+}
+
+
+const LoginPage = (props: LoginProps) => {
 
 	const navigation: any = useNavigate();
 
 	let [user, setUser] = useState(default_form_values)
+	let [id, setId] = useState(-1)
 
-	let [hasSubmit, setHasSubmit] = useState(false);
+	let [submitted, setSubmitted] = useState(false);
 
 	let[userExistsError, setUserExistsError] = useState(false)
 	const userErrorMessage = "Username and Password combination not found."
 
 	let [usernameErrorState, setUsernameErrorState] = useState(errorStateFalse)
 	let [passwordErrorState, setPasswordErrorState] = useState(errorStateFalse)
+
+
+	useEffect(() => {
+		if(submitted){
+			props.loginUser(id)
+
+			const timeout = setTimeout(() => {
+				navigation(ROUTER_PATHS.landing)
+			}, 3000)
+
+			return () => clearTimeout(timeout)
+		}
+	},[submitted, id, props, navigation])
 
 
 	const handleCreateUserClick = () => {
@@ -70,7 +90,18 @@ const LoginPage = () => {
 		event.preventDefault();
 
 		if(isValidSubmit()){
-			console.log(user)
+			UserService.login(user)
+			.then(res => {
+				setSubmitted(true);
+				setUserExistsError(false)
+				console.log("User logged in as: ",res.data);
+				setId(res.data.id)
+			})
+			.catch(e => {
+				setSubmitted(false);
+				setUserExistsError(true)
+				console.log("Error: username/password combo not found.", e);
+			});
 		}
 	}
 
@@ -87,7 +118,7 @@ const LoginPage = () => {
 
 	
 	const SubmitReply = () => {
-		if(hasSubmit){
+		if(submitted){
 			return(
 				<Box mt={10} display='flex' justifyContent='center'>
 					<Typography variant='h6'>{LOGIN.SubmitStatement1}{user.username}{LOGIN.SubmitStatement2}</Typography>
@@ -104,6 +135,8 @@ const LoginPage = () => {
 			<Box mt={30} display='flex' justifyContent='center'>
 				<Container maxWidth='xs'>
 					<Paper elevation={6}>
+						{submitted === false && 
+						<>
 						<Box sx={{p:2}} display='flex' justifyContent='center'>
 							<Typography variant='h4'>
 								{LOGIN.Title}
@@ -149,6 +182,27 @@ const LoginPage = () => {
 								
 							</Box>
 						</form>
+						</>
+					}
+					{ submitted === true &&
+					<>
+						<Box sx={{p:2}} display='flex' justifyContent='center'>
+							<Typography variant='h4'>
+								Successfully logged in as:
+							</Typography>
+						</Box>
+						<Box sx={{p:2}} display='flex' justifyContent='center'>
+							<Typography variant='h3'>
+								{user.username}
+							</Typography>
+						</Box>
+						<Box sx={{p:2}} display='flex' justifyContent='center'>
+							<Typography variant='h5'>
+								Redirecting to Home Page...
+							</Typography>
+						</Box>
+					</>
+					}
 					</Paper>
 				</Container>
 			</Box>

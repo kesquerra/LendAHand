@@ -7,9 +7,9 @@ import LendPage from './Components/LendPage';
 import RequestPage from './Components/RequestPage';
 import LoginPage from './Components/LoginPage';
 import ProfilePage from './Components/ProfilePage';
-import { ROUTER_PATHS } from './Constants';
+import { AppUser, ROUTER_PATHS } from './Constants';
 import "../public/lendahand.css";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { testBackendConnection, testBackendStatus } from './services/BackendStatusService';
 import CreateLendPage from './Components/CreateLendPage';
 import CreateUserPage from './Components/CreateUserPage';
@@ -18,6 +18,22 @@ import CreateUserPage from './Components/CreateUserPage';
 
 
 function App() {
+
+	let[userState, setUserState] = useState(AppUser.userLoggedOut)
+
+	const loginUser = (id: number) => {
+		setUserState({
+			id: id, 
+			loggedIn: true
+		})
+	}
+
+	const logoutUser = () => {
+		setUserState({
+			id: -1,
+			loggedIn: false
+		})
+	}
 
 	useEffect(()=> {
 		console.log("AppBar first Render")
@@ -40,7 +56,7 @@ function App() {
 	const lendPage = <LendPage/>
 	const createLendPage = <CreateLendPage/>
 	const requestPage = <RequestPage/>
-	const loginPage = <LoginPage/>
+	const loginPage = <LoginPage loginUser={loginUser}/>
 	const createUserPage = <CreateUserPage/>
 	const profilePage = <ProfilePage/>
 

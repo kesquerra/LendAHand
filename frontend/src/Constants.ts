@@ -1,3 +1,5 @@
+import { logState } from "./Types/types"
+
 export const BASENAME =  process.env.PUBLIC_URL
 
 export const ROUTER_PATHS = {
@@ -15,6 +17,13 @@ export const E404 = {
 	TITLE: '404 - Not Found!',
 	MESSAGE: 'Looks Like something went wrong. Better ',
 	BUTTON: 'Go Home'
+}
+
+
+
+const loggedOut: logState = {id: -1, loggedIn: false}
+export const AppUser = {
+	userLoggedOut: loggedOut
 }
 
 export const APPBAR = {
