@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react';
 import { Typography, Box, TextField, Paper, Container, Button } from "@mui/material"
 
-import {LOGIN} from '../Constants'
+import {LOGIN, ROUTER_PATHS} from '../Constants'
 import { UserType } from "../Types/types";
 import { UserService } from '../services/UserService';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -32,7 +33,10 @@ const errorUsernameAlreadyExists: errorState = {
 	msg: LOGIN.UsernameAlreadyExists
 }
 
+
 const CreateUserPage = () => {
+
+	const navigation: any = useNavigate();
 
 	let [user, setUser] = useState(default_form_values);
 	const [submitted, setSubmitted] = useState(false);
@@ -51,6 +55,17 @@ const CreateUserPage = () => {
       [id]: value
     });
   };
+
+
+	useEffect(() => {
+		if(submitted){
+			const timeout = setTimeout(() => {
+				navigation(ROUTER_PATHS.login)
+			}, 3000)
+
+			return () => clearTimeout(timeout)
+		}
+	},[submitted, navigation])
 
 
 	const handleSubmit = (event: any) => {
@@ -93,65 +108,73 @@ const CreateUserPage = () => {
 		return isValid;
 	}
 
-
-	const SubmitReply = () => {
-		if(submitted){
-			return(
-				<Box mt={10} display='flex' justifyContent='center'>
-					<Typography variant='h6'>Welcome, {user.username}, to Lend a Hand!</Typography>
-				</Box>
-			)
-		}
-
-		const space = ''
-		return(<Box>{space}</Box>)
-	}
 	
 	return(
 		<>
 			<Box mt={30} display='flex' justifyContent='center'>
-				<Container maxWidth='xs'>
+				<Container maxWidth='sm'>
 					<Paper elevation={6}>
-						<Box sx={{p:2}} display='flex' justifyContent='center'>
-							<Typography variant='h4'>
-								Create New User
-							</Typography>
-						</Box>
-						<form onSubmit={handleSubmit}>
-							<Box sx={{p:2}} display='flex' justifyContent='center' flexDirection={'column'}>
+						{submitted === false && 
+						<>
+							<Box sx={{p:2}} display='flex' justifyContent='center'>
+								<Typography variant='h4'>
+									Create New User
+								</Typography>
+							</Box>
+							<form onSubmit={handleSubmit}>
+								<Box sx={{p:2}} display='flex' justifyContent='center' flexDirection={'column'}>
+
+										<TextField
+										
+											error={usernameErrorState.error}
+											helperText={usernameErrorState.msg}
+											id = 'username'
+											variant = 'filled'
+											label = '*Username'
+											onChange={handleInputChange}
+										/>
 
 									<TextField
-									
-										error={usernameErrorState.error}
-										helperText={usernameErrorState.msg}
-										id = 'username'
+										
+										error={passwordErrorState.error}
+										helperText={passwordErrorState.msg}
+										sx={{mt:2}}
+										id = 'password'
 										variant = 'filled'
-										label = '*Username'
+										label = '*Password'
 										onChange={handleInputChange}
 									/>
 
-								<TextField
+									<Box display='flex'>
+										<Button fullWidth sx={{mt:2, mr: 1}} variant='contained' type='submit' value='Submit'>Create</Button>
+									</Box>
 									
-									error={passwordErrorState.error}
-									helperText={passwordErrorState.msg}
-									sx={{mt:2}}
-									id = 'password'
-									variant = 'filled'
-									label = '*Password'
-									onChange={handleInputChange}
-								/>
-
-								<Box display='flex'>
-									<Button fullWidth sx={{mt:2, mr: 1}} variant='contained' type='submit' value='Submit'>Create</Button>
 								</Box>
-								
+							</form>
+						</>
+						}
+						{ submitted === true &&
+						<>
+							<Box sx={{p:2}} display='flex' justifyContent='center'>
+								<Typography variant='h3'>
+									Created new user:
+								</Typography>
 							</Box>
-						</form>
+							<Box sx={{p:2}} display='flex' justifyContent='center'>
+								<Typography variant='h4'>
+									{user.username}
+								</Typography>
+							</Box>
+							<Box sx={{p:2}} display='flex' justifyContent='center'>
+								<Typography variant='h5'>
+									Redirecting to Login...
+								</Typography>
+							</Box>
+						</>
+						}
 					</Paper>
 				</Container>
 			</Box>
-
-			<SubmitReply/>
 		</>
 	);
 }
