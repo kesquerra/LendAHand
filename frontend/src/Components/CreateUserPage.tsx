@@ -76,7 +76,7 @@ const CreateUserPage = () => {
 				UserService.create(user)
 					.then(res => {
 						setSubmitted(true);
-						console.log(res.data);
+						console.log("New User Info: ",res);
 					})
 					.catch(e => {
 						setSubmitted(false);
