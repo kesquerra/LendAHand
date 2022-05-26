@@ -45,7 +45,7 @@ function App() {
 	const Page = () => {
 		return(
 		<div>
-			<AppBar/>
+			<AppBar userState={userState}/>
 			<Outlet/>
 		</div>
 		);
