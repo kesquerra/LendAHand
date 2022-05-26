@@ -15,6 +15,11 @@ pub struct Item {
     borrower_id: Option<i32>
 }
 
+pub enum ItemClass {
+    Borrowed,
+    Owned
+}
+
 impl Item {
     pub fn new(id:i32, name:String, img_uri:Option<String>, lend_start:DateTime<Local>, lend_end:DateTime<Local>, owner: i32, borrower: Option<i32>) -> Self {
         Self {

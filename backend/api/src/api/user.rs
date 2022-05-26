@@ -2,6 +2,7 @@
 
 use actix_web::{web, get, post, delete, Scope, HttpResponse, Responder};
 use crate::models::user::{test_users, User};
+use crate::models::item::ItemClass;
 use crate::SessionData;
 use crate::api::{log_api, HttpError};
 use bcrypt::{DEFAULT_COST, hash};
@@ -14,7 +15,8 @@ pub fn config() -> Scope {
     .service(create_user)
     .service(delete_user_by_id)
     .service(user_by_id)
-    .service(get_user_items)
+    .service(get_user_owned_items)
+    .service(get_user_borrowed_items)
 }
 
 pub fn log_user(method:&str, route:&str) {
@@ -87,12 +89,28 @@ async fn delete_user_by_id(data: web::Data<SessionData>, id: web::Path<String>) 
 }
 
 
-#[get("/{id}/item")]
-async fn get_user_items(data: web::Data<SessionData>, id: web::Path<String>) -> impl Responder {
+#[get("/{id}/owns")]
+async fn get_user_owned_items(data: web::Data<SessionData>, id: web::Path<String>) -> impl Responder {
     let id_int = id.into_inner();
     log_user("GET", &format!("/{}", id_int));
     match User::from_db(&data.db, id_int).await {
-        Some(user) => match user.get_items(&data.db).await {
+        Some(user) => match user.get_items(&data.db, ItemClass::Owned).await {
+            Some(items) => HttpResponse::Ok().json(items),
+            None => HttpResponse::Ok().finish()
+        },
+        None => HttpResponse::NotFound().json(HttpError {
+            status_code: 404,
+            message: "user not found".to_string()
+        })
+    }
+}
+
+#[get("/{id}/borrows")]
+async fn get_user_borrowed_items(data: web::Data<SessionData>, id: web::Path<String>) -> impl Responder {
+    let id_int = id.into_inner();
+    log_user("GET", &format!("/{}", id_int));
+    match User::from_db(&data.db, id_int).await {
+        Some(user) => match user.get_items(&data.db, ItemClass::Borrowed).await {
             Some(items) => HttpResponse::Ok().json(items),
             None => HttpResponse::Ok().finish()
         },
