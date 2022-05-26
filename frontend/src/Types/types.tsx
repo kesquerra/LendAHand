@@ -11,3 +11,9 @@ export interface ItemType  {
 	lend_start: string,
 	lend_end: string
 }
+
+
+export interface logState {
+	id: number, 
+	loggedIn: boolean
+}
