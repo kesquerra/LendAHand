@@ -1,10 +1,20 @@
 FROM rust:latest
 
-WORKDIR /backend/api
-COPY . .
+WORKDIR /api
 
-RUN mv .env.docker .env
+RUN echo "fn main() {}" > dummy.rs
+COPY ./Cargo.toml ./Cargo.toml
 
-RUN cargo install --path .
+RUN sed -i 's#src/main.rs#dummy.rs#' Cargo.toml
 
-CMD ["lah_api"]
+RUN cargo build --release
+
+RUN sed -i 's#dummy.rs#src/main.rs#' Cargo.toml
+
+COPY ./src ./src
+COPY ./migrations ./migrations
+COPY .env.docker .env
+
+RUN cargo build --release
+
+CMD ["target/release/api"]
