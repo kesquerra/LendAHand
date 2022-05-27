@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use sqlx::{FromRow};
 use crate::db::Db;
-use crate::models::item::Item;
+use crate::models::item::{Item, ItemClass};
 
 
 #[derive(Serialize, Deserialize, FromRow)]
@@ -72,10 +72,19 @@ impl User {
         }
     }
 
-    pub async fn get_items(&self, db: &Db) -> Option<Vec<Item>> {
+    pub async fn get_items(&self, db: &Db, class:ItemClass) -> Option<Vec<Item>> {
         match &db.pool {
             Some(pool) => {
-                match sqlx::query_as::<_, Item>(&format!("SELECT * FROM items i JOIN user_items ui ON ui.item_id = i.id WHERE ui.owner_id = {}", self.id.unwrap()))
+                let q:String;
+                match class {
+                    ItemClass::Owned => {
+                        q = format!("SELECT * FROM items i JOIN user_items ui ON ui.item_id = i.id WHERE ui.owner_id = {}", self.id.unwrap());
+                    },
+                    ItemClass::Borrowed => {
+                        q = format!("SELECT * FROM items i JOIN user_items ui ON ui.item_id = i.id WHERE ui.borrower_id = {}", self.id.unwrap());
+                    }
+                }
+                match sqlx::query_as::<_, Item>(&q)
                 .fetch_all(*&pool).await {
                     Ok(items) => Some(items),
                     Err(e) => {
