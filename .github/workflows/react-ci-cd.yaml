@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - main
+      - deploy        # remove after initial testing
+
   pull_request:
     branches:
       - main
-      - deploy        # remove after initial testing
-
+ 
 jobs:
   build:
     name: Build
