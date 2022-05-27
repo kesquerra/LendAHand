@@ -1,0 +1,32 @@
+name: Continuous Deployment
+
+# only deploy after pull request has merged (aka push to main)
+on:
+  push:
+    branches:
+      - main
+      - deploy    # to bypass merge request requirement (remove after test deploy works)
+
+jobs:
+  deployment:
+    runs-on: self-hosted          # uses GitHub Runners (access via Settings > Actions > Runners)
+    steps:                        # to deploy to DigitalOcean Droplet
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test application
+        run: npm test
+
+      - name: Build application
+        run: npm run build
+
+      - name: Restart server application
+        run: pm2 restart server
