@@ -4,6 +4,8 @@ Group project repo for FullStack WebDevelopment at PSU, Spring 2022.
 Prof: Casey Bailey.
 
 Temporary static frontend deployment: https://grad-2.github.io/LendAHand/
+Temporary Droplet frontend deployment: http://164.92.80.149/
+Full deployment goal endpoint: http://lendahand.ninja/
 
 | Team Member   | Lead Role   | 
 | ------------- | ----------- | 

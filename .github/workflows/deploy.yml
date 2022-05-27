@@ -1,5 +1,5 @@
 name: Continuous Deployment
-
+# combine with docker-compose for backend after initial runner is functional
 # only deploy after pull request has merged (aka push to main)
 on:
   push:
@@ -32,5 +32,8 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Restart server application
+      - name: Restart server application 
         run: pm2 restart server
+
+      - name: Run application
+        run: pm2 start "npm run start"    # hopefully this automatically runs server after restart
