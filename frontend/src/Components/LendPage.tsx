@@ -2,8 +2,9 @@ import { Typography, Box, Paper, Button, Table, TableBody, TableRow, TableCell} 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LEND, ROUTER_PATHS } from "../Constants";
-import {getLendItems} from "../services/LendService";
-import { ItemType } from "../Types/types";
+import { getLendItems } from "../services/LendService";
+import { ItemType, logState } from "../Types/types";
+
 
 
 
@@ -45,7 +46,13 @@ const ItemCard = (props: ItemType) => {
 	);
 }
 
-const LendPage = () => {
+
+
+interface LendPageProps {
+	userState: logState
+}
+
+const LendPage = (props: LendPageProps) => {
 	let [lendItems, setLendItems] = useState([]);
 
 	const navigation: any = useNavigate();
@@ -65,6 +72,11 @@ const LendPage = () => {
 	}
 
 
+	const handleLoginClick = () => {
+		navigation(ROUTER_PATHS.login)
+	}
+
+
 	return(
 		<>
 			<Box mt={15} display='flex' justifyContent='center'>
@@ -73,27 +85,44 @@ const LendPage = () => {
 				</Typography>
 			</Box>
 
-			<Box display='flex' justifyContent='center'>
-				<Typography variant='h5'>
-					{LEND.subtitle}
-				</Typography>
-			</Box>
-
-			<Box mt={5} display='flex' justifyContent='center'>
-				<Paper elevation={10}>
-					<Box sx={{p:2}} display='flex' justifyContent='center'>
-						<Typography sx={{textDecoration: 'underline'}} variant='h4' color='primary'>
-							Items ready to be lent!
-						</Typography>
-						<Button size='medium' sx={{ml: 5}} variant='contained' color='success' onClick={handleLendItemClick}>
-							<Typography variant='h6' sx={{textTransform: 'none'}}>Lend an Item</Typography>
-						</Button>
-					</Box>
-					<Box sx={{p:2}}>
-						{lendItems.map( (card: any, index: number) => (<ItemCard key={index} {...card} />) )}
-					</Box>
-				</Paper>
-			</Box>
+			
+				<Box mt={5} display='flex' justifyContent='center'>
+					<Paper elevation={10}>
+						{props.userState.loggedIn &&
+							<>
+								<Box sx={{p:2}} display='flex' justifyContent='center'>
+									<Typography sx={{textDecoration: 'underline'}} variant='h4' color='primary'>
+										Items ready to be lent!
+									</Typography>
+									<Button size='medium' sx={{ml: 5}} variant='contained' color='success' onClick={handleLendItemClick}>
+										<Typography variant='h6' sx={{textTransform: 'none'}}>Lend an Item</Typography>
+									</Button>
+								</Box>
+								<Box sx={{p:2}}>
+									{lendItems.map( (card: any, index: number) => (<ItemCard key={index} {...card} />) )}
+								</Box>
+							</>
+						}
+						{props.userState.loggedIn === false &&
+							<>
+								<Box sx={{p:2}} display='flex' justifyContent='center'>
+									<Typography variant='h4' color='error'>
+										You need to login before requesting or lending an item!
+									</Typography>
+								</Box>
+								<Box sx={{p:2}} display='flex' justifyContent='center'>
+									<Button variant='contained' onClick={handleLoginClick}>
+										<Typography>
+											Login
+										</Typography>
+									</Button>
+								</Box>
+							</>
+						}
+					</Paper>
+				</Box>
+			
+			
 		</>
 	);
 }
