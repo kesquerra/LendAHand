@@ -8,20 +8,23 @@ use crate::db::Db;
 pub struct Item {
     id: Option<i32>,
     name: String,
-    is_lent_item: bool,
-    img_uri: String,
+    img_uri: Option<String>,
     lend_start: DateTime<Local>,
     lend_end: DateTime<Local>,
-    owner_id: Option<i32>,
+    owner_id: i32,
     borrower_id: Option<i32>
 }
 
+pub enum ItemClass {
+    Borrowed,
+    Owned
+}
+
 impl Item {
-    pub fn new(id:i32, name:String, is_lent_item:bool, img_uri:String, lend_start:DateTime<Local>, lend_end:DateTime<Local>, owner: Option<i32>, borrower: Option<i32>) -> Self {
+    pub fn new(id:i32, name:String, img_uri:Option<String>, lend_start:DateTime<Local>, lend_end:DateTime<Local>, owner: i32, borrower: Option<i32>) -> Self {
         Self {
             id: Some(id),
             name: name,
-            is_lent_item: is_lent_item,
             img_uri: img_uri,
             lend_start: lend_start,
             lend_end: lend_end,
@@ -31,8 +34,11 @@ impl Item {
     }
 
     pub async fn to_db(&self, db: &Db) {
-        let q = format!("INSERT INTO items (name, is_lent_item, img_uri, lend_start, lend_end) VALUES ('{}', {}, '{}', '{}', '{}') RETURNING id;",
-        self.name, self.is_lent_item, self.img_uri, self.lend_start.to_rfc3339(), self.lend_end.to_rfc3339());
+        let q:String;
+        match &self.img_uri {
+            Some(uri) => {q = format!("INSERT INTO items (name, img_uri) VALUES ('{}', '{}') RETURNING id;", self.name, uri)}
+            None => {q = format!("INSERT INTO items (name) VALUES ('{}') RETURNING id;", self.name)}
+        }
         match &db.pool {
             Some(pool) => {
                 match sqlx::query(&q)
@@ -40,22 +46,21 @@ impl Item {
                     Ok(row) => {
                         info!("Item created.");
                         let item_id:i32 = row.get("id");
-                        match (self.owner_id, self.borrower_id) {
-                            (Some(o), Some(b)) => {
-                                match sqlx::query(&format!("INSERT INTO user_items VALUES ({}, {}, {})", item_id, o, b))
+                        match self.borrower_id {
+                            Some(b) => {
+                                match sqlx::query(&format!("INSERT INTO user_items VALUES ({}, {}, {}, '{}', '{}')", item_id, self.owner_id, b, self.lend_start, self.lend_end))
                                 .execute(&*pool).await {
                                     Ok(_) => info!("user_item record created."),
                                     Err(e) => warn!("user item creation error: {}", e)
                                 }
                             },
-                            (Some(o), None) => {
-                                match sqlx::query(&format!("INSERT INTO user_items (item_id, owner_id) VALUES ({}, {})", item_id, o))
+                            None => {
+                                match sqlx::query(&format!("INSERT INTO user_items (item_id, owner_id) VALUES ({}, {}, '{}', '{}')", item_id, self.owner_id, self.lend_start, self.lend_end))
                                 .execute(&*pool).await {
                                     Ok(_) => info!("user_item record created."),
                                     Err(e) => warn!("user item creation error: {}", e)
                                 }
-                            },
-                            (_, _) => {}
+                            }
                         }
                         
                     }
@@ -86,7 +91,7 @@ impl Item {
     }
 }
 
-pub fn test_items() -> [Item; 2] {
-    [Item::new(1, "testitem1".to_string(), true, "img1.jpg".to_string(), Local::now(), Local::now(), Some(1), Some(2)),
-    Item::new(2, "testitem2".to_string(), false, "img2.jpg".to_string(), Local::now(), Local::now(), Some(2), Some(1))]
+pub fn test_items(id1:i32, id2:i32) -> [Item; 2] {
+    [Item::new(1, "testitem1".to_string(), Some("img1.jpg".to_string()), Local::now(), Local::now(), id1, Some(id2)),
+    Item::new(2, "testitem2".to_string(), Some("img2.jpg".to_string()), Local::now(), Local::now(), id2, Some(id1))]
 }

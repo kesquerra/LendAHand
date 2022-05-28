@@ -1,0 +1,54 @@
+# Example from doctl-action, might be able to edit and use if main.yml workflow is functional 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-example
+  labels:
+    app: static-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-example
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: static-example
+    spec:
+      containers:
+      - name: static-example
+        image: <IMAGE>
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 100m
+      imagePullSecrets:
+      - name: asb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-example-service
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: "doctl-action.do-api.dev"
+    service.beta.kubernetes.io/do-loadbalancer-name: "doctl-action.do-api.dev"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "913a4f25-dd44-47e0-8588-eb09f095c7e2"
+    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
+spec:
+  type: LoadBalancer
+  ports:
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 5000
+  selector:
+    app: static-example

@@ -1,0 +1,96 @@
+name: Lend A Hand - CI/CD
+
+# combines backend, chat and frontend services into app
+on:
+  push:
+    branches: [master, deploy]    # remove deploy after initial tests work
+  pull_request:
+    branches: [master]
+
+jobs:
+
+  build:        # add this as service in docker-compose.yaml
+    # frontend:
+    #   runs-on: ubuntu-latest
+
+    #   defaults:
+    #     run:
+    #       working-directory: frontend
+
+    #   steps:
+    #     - name: Checkout Main Branch - frontend
+    #       uses: actions/checkout@v3
+        
+    #     - name: Setup Node Environment
+    #       uses: actions/setup-node@v3
+    #       with:
+    #         node-version: "14.x"
+    #         cache: "npm"
+          
+    #     - name: Install npm dependencies
+    #       run: npm ci
+        
+    #     - name: Build Frontend
+    #       run: npm run build --if-present
+    #       env:
+    #         CI: ""
+        
+    #     - name: Run Tests
+    #       run: npm run test -- --coverage
+
+    backend:
+      runs-on: ubunutu-latest
+
+      defaults:
+        runs:
+          working-directory: backend
+        environment: backend
+
+      steps:
+        - name: Checkout Main Branch - backend
+          uses: actions/checkout@v3
+
+        - name: Add environment variables to .env.docker and .env
+          run: |
+            touch "./api/.env.docker"
+            echo BACKEND_PORT=${{ secrets.BACKEND_PORT }} >> "./api/.env.docker"
+            echo HOST=${{ HOST }} >> "./api/.env.docker"
+            echo POSTGRES_DB=${{ POSTGRES_DB }} >> "./api/.env.docker"
+            echo POSTGRES_PASSWORD=${{ POSTGRES_PASSWORD }} >> "./api/.env.docker"
+            echo POSTGRES_PORT=${{ POSTGRES_PORT }} >> "./api/.env.docker"
+            echo POSTGRES_USER=${{ POSTGRES_USER }} >> "./api/.env.docker"
+            cp ./api/.env.docker ../.env
+
+        - name: Build Backend Images
+          run: docker-compose -f "../docker-compose.yaml" up -d --build 
+
+    chat:
+      runs-on: ubuntu-latest
+
+      defaults:
+        runs:
+          working-directory: chat-service
+      
+      steps:
+        - name: Checkout Main Branch - chat-service
+          uses: actions/checkout@v3
+        
+        - name: Build Chat Images
+          run: docker-compose up
+
+  deploy:
+    
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_ACCESS_TOKEN }}
+      
+      - name: Log in to DO Container Registry
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Push Image to DigitalOcean Container Registry
+        run: docker push registry.digitalocean.com/lend-a-hand:$(echo $GITHUB_SHA | head -c7)
+      
+      - name: Save DigitalOcean kubeconfig
+        run: doctl kubernetes cluster kubeconfig save k8s-1-22-8-do-1-sfo3-lendahand
