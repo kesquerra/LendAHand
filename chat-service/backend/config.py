@@ -15,6 +15,9 @@ class Config(object):
     )
     SESSION_REDIS = redis_client
 
+class ConfigDev(Config):
+    pass
+
 # returns string from object of .env CHAT_CONFIG or the config object as default
 def get_config() -> Config:
-    return import_string(os.environ.get("CHAT_CONFIG", "config.Config"))
+    return import_string(os.environ.get("CHAT_CONFIG", "backend.config.ConfigDev"))
