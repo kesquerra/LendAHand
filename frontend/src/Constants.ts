@@ -42,12 +42,12 @@ export const LANDING = {
 
 export const LEND = {
 	welcome: 'Welcome the Lend Page!',
-	subtitle: 'You can search through requested items or create a lend post!'
+	subtitle: 'You can search through lend items or create a lend post!'
 }
 
 export const REQUEST = {
 	welcome: 'Welcome the Request Page!',
-	subtitle: 'You can search through items out for lending or create a request post!'
+	subtitle: 'You can search through requested items or create a request post!'
 }
 
 export const PROFILE = {
