@@ -91,7 +91,7 @@ const LendPage = (props: LendPageProps) => {
 						{props.userState.loggedIn &&
 							<>
 								<Box sx={{p:2}} display='flex' justifyContent='center'>
-									<Typography sx={{textDecoration: 'underline'}} variant='h4' color='primary'>
+									<Typography variant='h4'>
 										Items ready to be lent!
 									</Typography>
 									<Button size='medium' sx={{ml: 5}} variant='contained' color='success' onClick={handleLendItemClick}>
