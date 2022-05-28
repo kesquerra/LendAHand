@@ -53,10 +53,10 @@ function App() {
 
 	const landingPage = <LandingPage/>
 	const notFound = <NotFound/>
-	const lendPage = <LendPage/>
+	const lendPage = <LendPage userState={userState}/>
 	const createLendPage = <CreateLendPage/>
 	const requestPage = <RequestPage/>
-	const loginPage = <LoginPage loginUser={loginUser}/>
+	const loginPage = <LoginPage loginUser={loginUser} userState={userState}/>
 	const createUserPage = <CreateUserPage/>
 	const profilePage = <ProfilePage/>
 
