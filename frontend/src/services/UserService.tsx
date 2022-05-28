@@ -12,9 +12,9 @@ export const UserService = {
 
 
 	async login(user: UserType) {
-		console.log(">>>>> Attempting Post(login) @ /api/user with: ", user);
-		let res = await BackendClient.post("/api/user", {username: user.username, password: user.password});
-		console.log("<<<<< Attempt to Post(login) @ /api/user finished.");
+		console.log(">>>>> Attempting Post(login) @ /api/auth with: ", user);
+		let res = await BackendClient.post("/api/auth", {username: user.username, password: user.password});
+		console.log("<<<<< Attempt to Post(login) @ /api/auth finished.");
 		return res
 	}
 }
