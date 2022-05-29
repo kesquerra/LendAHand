@@ -1,11 +1,15 @@
+import { logState } from "./Types/types"
+
 export const BASENAME =  process.env.PUBLIC_URL
 
 export const ROUTER_PATHS = {
 	landing: '/',
 	lend: '/lend',
+	createLendItem: '/create-lend-item',
 	request: '/request',
 	login: '/login',
 	profile: '/profile',
+	createUser: '/create-user',
 	error: '*'
 }
 
@@ -13,6 +17,13 @@ export const E404 = {
 	TITLE: '404 - Not Found!',
 	MESSAGE: 'Looks Like something went wrong. Better ',
 	BUTTON: 'Go Home'
+}
+
+
+
+const loggedOut: logState = {id: -1, loggedIn: false}
+export const AppUser = {
+	userLoggedOut: loggedOut
 }
 
 export const APPBAR = {
@@ -31,12 +42,12 @@ export const LANDING = {
 
 export const LEND = {
 	welcome: 'Welcome the Lend Page!',
-	subtitle: 'You can search through requested items or create a lend post!'
+	subtitle: 'You can search through lend items or create a lend post!'
 }
 
 export const REQUEST = {
 	welcome: 'Welcome the Request Page!',
-	subtitle: 'You can search through items out for lending or create a request post!'
+	subtitle: 'You can search through requested items or create a request post!'
 }
 
 export const PROFILE = {
@@ -48,5 +59,6 @@ export const LOGIN = {
 	SubmitStatement1: 'Welcome ',
 	SubmitStatement2: ' !',
 	Title: 'Login',
-	HelperText: '*Field is required.'
+	HelperText: '*Field is required.',
+	UsernameAlreadyExists: "Username already exists."
 }

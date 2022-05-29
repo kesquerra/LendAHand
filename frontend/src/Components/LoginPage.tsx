@@ -1,51 +1,85 @@
 import { Typography, Box, TextField, Paper, Container, Button } from "@mui/material"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react'
-import {LOGIN} from '../Constants'
+import {LOGIN, ROUTER_PATHS} from '../Constants'
+import { logState, UserType } from "../Types/types";
+import { useNavigate } from "react-router-dom";
+import { UserService } from "../services/UserService";
 
 
-interface userInfo {
-	name: string,
-	password: string
-}
-
-const default_form_values: userInfo = {
-	name: '',
+const default_form_values: UserType = {
+	username: '',
 	password: ''
 }
 
+// Typed error states for inputs
+interface errorState {
+	error: boolean,
+	msg: string
+}
+const errorStateFalse: errorState = {
+	error: false,
+	msg: ""
+}
+const errorStateTrue: errorState = {
+	error: true,
+	msg: LOGIN.HelperText
+}
 
-const LoginPage = () => {
 
-	let [infoState, setInfoState] = useState(default_form_values);
-	let [hasSubmit, setHasSubmit] = useState(false);
-
-	let [nameError, setNameError] = useState(false);
-	let [passwordError, setPasswordError] = useState(false);
-
-	let [nameHelperText, setNameHelperText] = useState("")
-	let [passwordHelperText, setPasswordHelperText] = useState("")
+interface LoginProps {
+	loginUser: (id: number) => void,
+	userState: logState
+}
 
 
-	const isValidSubmit = (name: string, password: string): Boolean => {
+const LoginPage = (props: LoginProps) => {
+
+	const navigation: any = useNavigate();
+
+	let [user, setUser] = useState(default_form_values)
+
+	let [submitted, setSubmitted] = useState(false);
+
+	let[userExistsError, setUserExistsError] = useState(false)
+	const userErrorMessage = "Username and Password combination not found."
+
+	let [usernameErrorState, setUsernameErrorState] = useState(errorStateFalse)
+	let [passwordErrorState, setPasswordErrorState] = useState(errorStateFalse)
+
+
+	useEffect(() => {
+		console.log("in loging use effect")
+		if(props.userState.loggedIn){
+			const timeout = setTimeout(() => {
+				navigation(ROUTER_PATHS.landing)
+			}, 3000)
+	
+			return () => clearTimeout(timeout)
+		}
+	},[props.userState.loggedIn, navigation ])
+
+
+	const handleCreateUserClick = () => {
+		navigation(ROUTER_PATHS.createUser);
+	}
+
+
+	const isValidSubmit = (): Boolean => {
 		let isValid = true;
 
-		if(name === default_form_values.name) {
-			setNameError(true);
-			setNameHelperText(LOGIN.HelperText);
+		if(user.username === default_form_values.username) {
+			setUsernameErrorState(errorStateTrue)
 			isValid = false;
 		} else {
-			setNameError(false);
-			setNameHelperText('');
+			setUsernameErrorState(errorStateFalse)
 		}
 
-		if(password === default_form_values.password) {
-			setPasswordError(true);
-			setPasswordHelperText(LOGIN.HelperText);
+		if(user.password === default_form_values.password) {
+			setPasswordErrorState(errorStateTrue)
 			isValid = false;
 		} else {
-			setPasswordError(false);
-			setPasswordHelperText('');
+			setPasswordErrorState(errorStateFalse)
 		}
 
 		return isValid;
@@ -53,34 +87,43 @@ const LoginPage = () => {
 
 	const handleSubmit = (event: any) => {
 		event.preventDefault();
-		const name = event.target[0].value
-		const password = event.target[1].value
 
-		if(isValidSubmit(name, password)){
-
-			console.log(event.target[0].value);
-			console.log(event.target[1].value);
-
-			let newInfo: userInfo = {
-				name: event.target[0].value,
-				password: event.target[1].value
-			}
-
-			setInfoState(newInfo);
-			setHasSubmit(true);
-		} else {
-			setInfoState(default_form_values);
-			setHasSubmit(false);
+		if(isValidSubmit()){
+			UserService.login(user)
+			.then(res => {
+				setSubmitted(true);
+				setUserExistsError(false)
+				console.log("User logged in as: ",res.data);
+				console.log("User id: ",res.data.id)
+			
+				props.loginUser(res.data.id)
+				
+			})
+			.catch(e => {
+				setSubmitted(false);
+				setUserExistsError(true)
+				console.log("Error: username/password combo not found.", e);
+			});
 		}
-
 	}
+
+	const handleInputChange = (event: any) => {
+    const {
+      id,
+      value
+    } = event.target;
+    setUser({
+      ...user,
+      [id]: value
+    });
+  };
 
 	
 	const SubmitReply = () => {
-		if(hasSubmit){
+		if(submitted){
 			return(
 				<Box mt={10} display='flex' justifyContent='center'>
-					<Typography variant='h6'>{LOGIN.SubmitStatement1}{infoState.name}{LOGIN.SubmitStatement2}</Typography>
+					<Typography variant='h6'>{LOGIN.SubmitStatement1}{user.username}{LOGIN.SubmitStatement2}</Typography>
 				</Box>
 			)
 		}
@@ -88,41 +131,76 @@ const LoginPage = () => {
 		const space = ''
 		return(<Box>{space}</Box>)
 	}
-	
+
 	return(
 		<>
 			<Box mt={30} display='flex' justifyContent='center'>
 				<Container maxWidth='xs'>
 					<Paper elevation={6}>
+						{props.userState.loggedIn === false && 
+						<>
 						<Box sx={{p:2}} display='flex' justifyContent='center'>
 							<Typography variant='h4'>
 								{LOGIN.Title}
 							</Typography>
+						</Box>
+						{ userExistsError === true &&
+							<Box sx={{p:2}} display='flex' justifyContent='center'>
+								<Typography variant='subtitle1' color='error'>
+									{userErrorMessage}
+								</Typography>
+							</Box>
+						}
+						<Box sx={{p:2}} display='flex' justifyContent='center'>
+							<Button variant="contained" onClick={handleCreateUserClick}>Create New User</Button>
 						</Box>
 						<form onSubmit={handleSubmit}>
 							<Box sx={{p:2}} display='flex' justifyContent='center' flexDirection={'column'}>
 
 									<TextField
 									
-										error={nameError}
-										helperText={nameHelperText}
-										id = 'user-name'
+										error={usernameErrorState.error}
+										helperText={usernameErrorState.msg}
+										id = 'username'
 										variant = 'filled'
-										label = '*User Name'
+										label = '*Username'
+										onChange={handleInputChange}
 									/>
 
 								<TextField
 									
-									error={passwordError}
-									helperText={passwordHelperText}
+									error={passwordErrorState.error}
+									helperText={passwordErrorState.msg}
 									sx={{mt:2}}
-									id = 'user-password'
+									id = 'password'
 									variant = 'filled'
 									label = '*Password'
+									onChange={handleInputChange}
 								/>
-								<Button sx={{mt:2}} variant='contained' type='submit' value='Submit'>Submit</Button>
+
+								<Box display='flex'>
+									<Button fullWidth sx={{mt:2, mr: 1}} variant='contained' type='submit' value='Submit'>Login</Button>
+								</Box>
+								
 							</Box>
 						</form>
+						</>
+					}
+					{ props.userState.loggedIn === true &&
+					<>
+						<Box sx={{p:2}} display='flex' justifyContent='center'>
+							<Typography variant='h4'>
+								Successfully logged in!
+							</Typography>
+						</Box>
+			
+						<Box sx={{p:2}} display='flex' justifyContent='center'>
+							<Typography variant='h5'>
+								Redirecting to Home Page...
+							</Typography>
+						</Box>
+					</>
+					}
 					</Paper>
 				</Container>
 			</Box>

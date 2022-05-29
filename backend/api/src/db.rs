@@ -21,10 +21,10 @@ impl Db {
 
     pub async fn from_env() -> Self {
         dotenv::dotenv().ok();
-        let username = dotenv::var("DB_USERNAME");
-        let password = dotenv::var("DB_PASSWORD");
+        let username = dotenv::var("POSTGRES_USER");
+        let password = dotenv::var("POSTGRES_PASSWORD");
         let host = dotenv::var("HOST");
-        let db_name = dotenv::var("DB_NAME");
+        let db_name = dotenv::var("POSTGRES_DB");
 
         match (username, password, host, db_name) {
             (Ok(un), Ok(pw), Ok(h), Ok(db)) => {     
@@ -41,9 +41,10 @@ impl Db {
     }
 
     pub async fn pool(username:String, password:String, host:String, db:String) -> Option<PgPool> {
+        info!("postgres://{}:{}@{}", username, password, db);
         let pgpool = PgPoolOptions::new()
             .max_connections(5)
-            .connect(format!("postgres://{}:{}@{}/{}", username, password, host, db).as_str())
+            .connect(format!("postgres://{}:{}@{}", username, password, db).as_str())
             .await;
 
         match pgpool {
@@ -102,7 +103,7 @@ impl Db {
     pub async fn get_items(&self) -> Option<Vec<Item>> {
         match &self.pool {
             Some(pool) => {
-                match sqlx::query_as::<_, Item>("SELECT * FROM items").fetch_all(&*pool).await {
+                match sqlx::query_as::<_, Item>("SELECT * FROM items i JOIN user_items ui ON ui.item_id = i.id").fetch_all(&*pool).await {
                     Ok(rows) => Some(rows),
                     Err(err) => {
                         warn!("Database query error: {}", err);
@@ -129,15 +130,35 @@ impl Db {
         }
     }
 
-
     pub async fn seed_data(&self) {
-        let users = test_users();
-        let items = test_items();
-        for user in users {
-            user.to_db(&self).await;
-        }
-        for item in items {
-            item.to_db(&self).await;
+        match self.clone().get_users().await {
+            Some(db_users) => {
+                if db_users.len() == 0 {
+                    let users = test_users();
+                    for user in &users {
+                        user.to_db(&self).await;
+                    }
+                    let user1 = User::from_db_by_username(&self, users[0].username.clone()).await;
+                    let user2 = User::from_db_by_username(&self, users[1].username.clone()).await;
+                    match (user1, user2) {
+                        (Some(u1), Some(u2)) => {
+                            match (u1.id, u2.id) {
+                                (Some(id1), Some(id2)) => {
+                                    let items = test_items(id1, id2);
+                                    for item in items {
+                                        item.to_db(&self).await;
+                                    }
+                                },
+                                (_, _) => {}
+                            }
+                            
+                        },
+                        (_, _) => {}
+                    }
+                     
+                }
+            },
+            None => {}
         }
     }
 }

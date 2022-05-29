@@ -51,7 +51,6 @@
 > ### Request Example:
 > > ```
 > > {
-> >     "id": 3,
 > >     "username": "db_createduser1",
 > >     "password": "db_password1"
 > > }
@@ -89,6 +88,48 @@
 > > Status Code: 204
 > > ```
 
+## GET /api/user/{id}/owns
+> ### Request Example:
+> > id: integer
+> ### Response Example:
+> > ```
+> > Status Code: 200
+> >
+> > [
+> >     {
+> >         "id":9,
+> >         "name":"testitem1",
+> >         "is_lent_item":true,
+> >         "img_uri":"img1.jpg",
+> >         "lend_start":"2022-05-25T05:49:22.473895+00:00",
+> >         "lend_end":"2022-05-25T05:49:22.473943+00:00",
+> >         "owner_id":1,
+> >         "borrower_id":2
+> >     }
+> > ]
+> > ```
+
+## GET /api/user/{id}/borrows
+> ### Request Example:
+> > id: integer
+> ### Response Example:
+> > ```
+> > Status Code: 200
+> >
+> > [
+> >     {
+> >         "id":9,
+> >         "name":"testitem1",
+> >         "is_lent_item":true,
+> >         "img_uri":"img1.jpg",
+> >         "lend_start":"2022-05-25T05:49:22.473895+00:00",
+> >         "lend_end":"2022-05-25T05:49:22.473943+00:00",
+> >         "owner_id":1,
+> >         "borrower_id":2
+> >     }
+> > ]
+> > ```
+
 
 ## GET /api/item
 > ### Request Example:
@@ -114,12 +155,11 @@
 > ### Request Example:
 > > ```
 > > {
-> >         "id":1,
 > >         "name":"testitem1",
-> >         "is_lent_item":true,
 > >         "img_uri":"img1.jpg",
 > >         "lend_start":"2022-05-16T18:59:01.139024-07:00",
-> >         "lend_end":"2022-05-16T18:59:01.139032-07:00"
+> >         "lend_end":"2022-05-16T18:59:01.139032-07:00",
+> >         "owner_id: 1
 > > }
 > > ```
 > ### Response Example:
@@ -159,4 +199,23 @@
 > ### Response Example:
 > > ```
 > > Status Code: 204
+> > ```
+
+## POST /api/auth
+> ### Request Example:
+> > ```
+> > {
+> >     "username": "db_createduser1",
+> >     "password": "db_password1"
+> > }
+> > ```
+> ### Response Example:
+> > ```
+> > Status Code: 200
+> >
+> > {
+> >     "id": 3,
+> >     "username": "db_createduser1",
+> >     "password": "db_password1"
+> > }
 > > ```

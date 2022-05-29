@@ -26,7 +26,7 @@ async fn all_items(data: web::Data<SessionData>) -> impl Responder {
             HttpResponse::Ok().json(items)
         }
         None => {
-            HttpResponse::Ok().json(test_items())
+            HttpResponse::Ok().json(test_items(1, 2))
         }
     }
 }

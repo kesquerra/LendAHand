@@ -6,7 +6,7 @@ mod api;
 mod config;
 mod db;
 
-use actix_web::{get, App, web, HttpResponse, HttpServer, Responder, http};
+use actix_web::{get, App, web, HttpResponse, HttpServer, Responder};
 use actix_cors::Cors;
 use std::io;
 
@@ -39,8 +39,6 @@ async fn main() -> io::Result<()> {
     let db:db::Db = db::Db::from_env().await;
     db.migrate().await;
     db.seed_data().await;
-
-    let host = config.host.clone();
 
     // start server at HOST:PORT, persisting Db connection
     HttpServer::new(move || {

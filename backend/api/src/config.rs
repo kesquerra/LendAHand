@@ -2,7 +2,7 @@ use dotenv;
 
 pub struct Config {
     pub host: String,
-    pub port: u16
+    pub port: u16,
 }
 
 impl Config {
@@ -17,14 +17,14 @@ impl Config {
             (Ok(h), Ok(p)) => {
                 Config {
                     host: h,
-                    port: p.parse::<u16>().unwrap()
+                    port: p.parse::<u16>().unwrap(),
                 }
             }
             (_, _) => {
                 warn!("Environment variables not set. Setting to default of localhost:9000");
                 Config {
                     host: "127.0.0.1".to_string(),
-                    port: 9000
+                    port: 9000,
                 }
             }
         }
