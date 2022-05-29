@@ -45,7 +45,7 @@ function App() {
 	const Page = () => {
 		return(
 		<div>
-			<AppBar userState={userState}/>
+			<AppBar userState={userState} logoutUser={logoutUser}/>
 			<Outlet/>
 		</div>
 		);

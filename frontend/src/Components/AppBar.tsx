@@ -7,7 +7,8 @@ import { logState } from "../Types/types";
 
 
 interface AppBarProps {
-	userState: logState
+	userState: logState,
+	logoutUser: () => void
 }
 
 const AppBar = (props: AppBarProps) => {
@@ -18,6 +19,8 @@ const AppBar = (props: AppBarProps) => {
 	useEffect (()=> {
 		console.log("App bar has rerendered.")
 	});
+
+	
 
 	const onClickLanding = () => {
 		navigation(ROUTER_PATHS.landing);
@@ -37,6 +40,11 @@ const AppBar = (props: AppBarProps) => {
 
 	const onClickLogin = () => {
 		navigation(ROUTER_PATHS.login);
+	}
+
+	const onClickLogout = () => {
+		props.logoutUser()
+		navigation(ROUTER_PATHS.landing);
 	}
 
 	const middleButtonSX = {
@@ -83,17 +91,26 @@ const AppBar = (props: AppBarProps) => {
 
 					<Box width={1} display='flex' justifyContent='right'>
 						{ props.userState.loggedIn && 
-							<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick = {onClickProfile}>
+							<>
+								<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick = {onClickProfile}>
+									<Typography variant="subtitle1" color='white'>
+										{APPBAR.PROFILE}
+									</Typography>
+								</Button>
+								<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick={onClickLogout}>
+									<Typography variant="subtitle1" color='white'>
+											Logout
+										</Typography>
+								</Button>
+							</>
+						}
+						{ props.userState.loggedIn === false &&
+							<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick = {onClickLogin}>
 								<Typography variant="subtitle1" color='white'>
-									{APPBAR.PROFILE}
+									{APPBAR.LOGIN}
 								</Typography>
 							</Button>
 						}
-						<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick = {onClickLogin}>
-							<Typography variant="subtitle1" color='white'>
-								{APPBAR.LOGIN}
-							</Typography>
-						</Button>
 					</Box>
 
 				</Toolbar>
