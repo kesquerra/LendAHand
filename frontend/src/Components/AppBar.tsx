@@ -2,9 +2,16 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import {Box, AppBar as Bar, Toolbar, Typography, Button, ButtonGroup} from '@mui/material'
 import { APPBAR, ROUTER_PATHS } from '../Constants';
+import { logState } from "../Types/types";
 
 
-const AppBar = () => {
+
+interface AppBarProps {
+	userState: logState,
+	logoutUser: () => void
+}
+
+const AppBar = (props: AppBarProps) => {
 
 	const navigation: any = useNavigate();
 
@@ -12,6 +19,8 @@ const AppBar = () => {
 	useEffect (()=> {
 		console.log("App bar has rerendered.")
 	});
+
+	
 
 	const onClickLanding = () => {
 		navigation(ROUTER_PATHS.landing);
@@ -31,6 +40,11 @@ const AppBar = () => {
 
 	const onClickLogin = () => {
 		navigation(ROUTER_PATHS.login);
+	}
+
+	const onClickLogout = () => {
+		props.logoutUser()
+		navigation(ROUTER_PATHS.landing);
 	}
 
 	const middleButtonSX = {
@@ -76,16 +90,27 @@ const AppBar = () => {
 					</Box>
 
 					<Box width={1} display='flex' justifyContent='right'>
-						<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick = {onClickProfile}>
-							<Typography variant="subtitle1" color='white'>
-								{APPBAR.PROFILE}
-							</Typography>
-						</Button>
-						<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick = {onClickLogin}>
-							<Typography variant="subtitle1" color='white'>
-								{APPBAR.LOGIN}
-							</Typography>
-						</Button>
+						{ props.userState.loggedIn && 
+							<>
+								<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick = {onClickProfile}>
+									<Typography variant="subtitle1" color='white'>
+										{APPBAR.PROFILE}
+									</Typography>
+								</Button>
+								<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick={onClickLogout}>
+									<Typography variant="subtitle1" color='white'>
+											Logout
+										</Typography>
+								</Button>
+							</>
+						}
+						{ props.userState.loggedIn === false &&
+							<Button sx={rightButtonsSX} size='medium' variant='contained' color='info' onClick = {onClickLogin}>
+								<Typography variant="subtitle1" color='white'>
+									{APPBAR.LOGIN}
+								</Typography>
+							</Button>
+						}
 					</Box>
 
 				</Toolbar>
