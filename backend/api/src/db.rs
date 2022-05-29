@@ -130,25 +130,35 @@ impl Db {
         }
     }
 
-
     pub async fn seed_data(&self) {
-        let users = test_users();
-        let items = test_items();
-        match Db::get_users(self.clone()).await {
-            Some(_) => {},
-            None => {
-                for user in users {
-                    user.to_db(&self).await
+        match self.clone().get_users().await {
+            Some(db_users) => {
+                if db_users.len() == 0 {
+                    let users = test_users();
+                    for user in &users {
+                        user.to_db(&self).await;
+                    }
+                    let user1 = User::from_db_by_username(&self, users[0].username.clone()).await;
+                    let user2 = User::from_db_by_username(&self, users[1].username.clone()).await;
+                    match (user1, user2) {
+                        (Some(u1), Some(u2)) => {
+                            match (u1.id, u2.id) {
+                                (Some(id1), Some(id2)) => {
+                                    let items = test_items(id1, id2);
+                                    for item in items {
+                                        item.to_db(&self).await;
+                                    }
+                                },
+                                (_, _) => {}
+                            }
+                            
+                        },
+                        (_, _) => {}
+                    }
+                     
                 }
-            }
-        }
-        match self.get_items().await {
-            Some(_) => {},
-            None => {
-                for item in items {
-                    item.to_db(&self).await;
-                }
-            }
+            },
+            None => {}
         }
     }
 }
