@@ -10,9 +10,9 @@ services:
     # Configuration for building the docker image for the service
     build:
       context: . # Use an image built from the specified dockerfile in the current directory.
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+      - "8080:8080" # Forward the exposed port 8080 on the container to port 80 on the host machine
     restart: unless-stopped
     depends_on: 
       - redis # This service depends on redis. Start that first.
@@ -24,17 +24,17 @@ services:
 
   # Redis Service   
   redis:
-    image: "redis:alpine" # Use a public Redis image to build the redis service    
+    image: "redis:latest" # Use a public Redis image to build the redis service    
     restart: unless-stopped
     networks:
       - backend
 
-  # Load seed data through redis-cli
+  # Attempt bulk loading to seed data through redis-cli
   rcli:
     image: redis:latest
     links:
       - redis
-    command: cat ./backend/seed-data.txt | redis-cli --pipe
+    command: cat seed-data.txt | redis-cli --pipe
 
 networks:
   backend:  

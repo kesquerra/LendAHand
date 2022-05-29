@@ -13,7 +13,8 @@ def stream():
 @app.route("/<path:path>")
 def catch_all(path):
     # not sure if this needs to return frontend
-    return app.send_static_file("index.html")
+    return "You have connected to the chat-service backend!!!"
+    # return app.send_static_file("index.html")
 
 @app.route("/help")
 def index():
@@ -45,7 +46,7 @@ def logout():
     return jsonify(None), 200
 
 @app.route("/users")
-def get_online_users():
+def get_user_info_from_ids():
 	# This will return a JSON of all the users stored in redis
 	ids = request.args.getlist("ids[]")
 	if ids:
@@ -56,7 +57,7 @@ def get_online_users():
 			users[id] = {
 				"id": id,
 				"username": user[b'username'].decode("utf-8"),
-				"online": boo(is_member)
+				"online": bool(is_member)
 			}
 		return jsonify(users)
 	return jsonify(None), 404

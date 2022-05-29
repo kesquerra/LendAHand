@@ -5,4 +5,4 @@ if __name__ == "__main__":
     import eventlet
 
     eventlet.monkey_patch()
-    run_app()
+    run_app(app)
