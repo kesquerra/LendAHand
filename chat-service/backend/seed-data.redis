@@ -1,5 +1,4 @@
 ## redis-cli does not accept comments, so this file is simply for reference on redis schemas used. 
-## Use 'seed-data.txt' file to load seed data via docker-compose, or create() in seed_data.py to add example data.
 
 # Example template for setting and getting redis chat data
 

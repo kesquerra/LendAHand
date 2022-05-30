@@ -13,11 +13,12 @@ from backend import utils
 
 sess = Session()
 app = Flask(__name__)#, static_url_path="", static_folder="../../frontend/build") # probably have to tweak these when connecting everything together
+app.secret_key = os.urandom(24)
 app.config.from_object(get_config())
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
-def run_app():
+def run_app(app):
     # Connect to redis
     utils.init_redis()
     sess.init_app(app)

@@ -52,7 +52,7 @@ def io_on_message(message):
     
     message["message"] = escape(message["message"])
     # reset online status of user
-    utils.redis_client.sadd("online_users", message["from"])
+    #utils.redis_client.sadd("online_users", message["from"])
     # store new message
     message_string = json.dumps(message)
     room_id = message["roomId"]

@@ -18,7 +18,7 @@ def create_user(username):
     user_key = f"user:{next_id}"
     redis_client.set(username_key, user_key)
     redis_client.hmset(user_key, {"username": username})
-    
+    redis_client.sadd("online_users", next_id)
     redis_client.sadd(f"user:{next_id}:rooms", "0")
     return {"id": next_id, "username": username}
 
@@ -27,7 +27,7 @@ def get_messages(room_id=0, offset=0, size=50):
     room_key = f"room:{room_id}"        
     room_exists = redis_client.exists(room_key)
     if not room_exists:
-        return []
+        return [{"messages": None}]
     else:
         values = redis_client.zrevrange(room_key, offset + size)
         return list(map(lambda x: json.loads(x.decode("utf-8")), values))

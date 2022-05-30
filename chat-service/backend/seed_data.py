@@ -37,6 +37,7 @@ def add_message(room_id, from_id, content, timestamp):
 def create():
     """Generate seed data"""
     users = []
+    utils.redis_client.delete("online_users")       # need this to be a set, and it becomes a string key
     for seed_user in seed_users:
         user = utils.create_user(seed_user)
         users.append(user)
@@ -61,7 +62,7 @@ def create():
                 private_room_id,
                 other_user["id"],
                 get_greeting(),
-                time.time() - math_random() * 333
+                time.time() - math_random() * 444
             )
             
     def random_user_id():

@@ -28,13 +28,6 @@ services:
     restart: unless-stopped
     networks:
       - backend
-
-  # Attempt bulk loading to seed data through redis-cli
-  rcli:
-    image: redis:latest
-    links:
-      - redis
-    command: cat seed-data.txt | redis-cli --pipe
-
+      
 networks:
   backend:  
