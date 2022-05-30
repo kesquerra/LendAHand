@@ -16,6 +16,9 @@ This week, we discussed the SQL schema to update fields to allow for multiple bo
 
 | Taylor Noah | `Frontend` |
 | -- | -- |
+This week I added user-service. This allows the user to create a new user account and/or login. This includes a new and functional create user page as well as adding login page functionality. Logging in now has an effect on the App. Before logging in some pages require the user to login. Additionally, the AppBar's available buttons will change depending the login status. User service and Lend Service(Get only) have been modified to work on and tested on the containerized backend. I also created a Create-Lend page. It currently lacks functionality and connection to the backend. My goal by wednesday is to have the create-lend functionality and connection complete.
+
+As it stands, my goal for a Request Page and Profile Page will remain as stretch goals.
 
 
 | Kyle Esquerra | `Backend` | 
