@@ -2,7 +2,7 @@ import { Typography, Box, Paper, Button, Table, TableBody, TableRow, TableCell} 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LEND, ROUTER_PATHS } from "../Constants";
-import { getLendItems } from "../services/LendService";
+import lendService from "../services/LendService";
 import { ItemType, logState } from "../Types/types";
 
 
@@ -58,7 +58,7 @@ const LendPage = (props: LendPageProps) => {
 	const navigation: any = useNavigate();
 
 	useEffect(() => {
-		getLendItems()
+		lendService.getItems()
 			.then(res => {
 				setLendItems(res.data)
 			})

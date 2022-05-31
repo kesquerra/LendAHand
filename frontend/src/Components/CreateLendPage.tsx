@@ -2,7 +2,8 @@ import { Box, Container, Paper, Typography, TextField, Button, Table, TableBody,
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTER_PATHS } from "../Constants";
-import { ItemType } from "../Types/types";
+import lendService from "../services/LendService";
+import { ItemType, logState } from "../Types/types";
 
 
 const defaultItem: ItemType = {
@@ -19,7 +20,11 @@ const defaultFormValues = {
 	days: ''
 }
 
-const CreateLendPage = () => {
+interface CreateLendPageProps {
+	userState: logState
+}
+
+const CreateLendPage = (props: CreateLendPageProps) => {
 
 	const navigation: any = useNavigate();
 
@@ -83,15 +88,34 @@ const CreateLendPage = () => {
 						break
 					}
 				}
-
+				
 			setItem({
 				...item,
+				id: props.userState.id,
 				name: formValues.name,
 				lend_start: currentTime,
-				lend_end: endTime
+				lend_end: endTime,
+				img_uri: item.img_uri
 			})
 			setIsCreated(true)
 			setTitle("Here is your Lend Item!")
+
+			const createItem: ItemType = {
+				id: props.userState.id,
+				name: formValues.name,
+				lend_start: currentTime,
+				lend_end: endTime,
+				img_uri: "",
+				is_lent_item: true
+			}
+
+			lendService.createItem(createItem)
+				.then(res => {
+					console.log("New Item Info: ",res);
+				})
+				.catch(e => {
+					console.log("Error creating new item", e);
+				});
 		}
 	}
 
