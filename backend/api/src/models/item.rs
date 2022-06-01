@@ -55,7 +55,7 @@ impl Item {
                                 }
                             },
                             None => {
-                                match sqlx::query(&format!("INSERT INTO user_items (item_id, owner_id) VALUES ({}, {}, '{}', '{}')", item_id, self.owner_id, self.lend_start, self.lend_end))
+                                match sqlx::query(&format!("INSERT INTO user_items (item_id, owner_id, lend_start, lend_end) VALUES ({}, {}, '{}', '{}')", item_id, self.owner_id, self.lend_start, self.lend_end))
                                 .execute(&*pool).await {
                                     Ok(_) => info!("user_item record created."),
                                     Err(e) => warn!("user item creation error: {}", e)
