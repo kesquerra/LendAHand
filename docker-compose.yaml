@@ -19,3 +19,13 @@ services:
       - "${BACKEND_PORT}"
     depends_on:
       - db
+  frontend:
+    container_name: react
+    build: ./frontend
+    restart: always
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    expose:
+      - "${FRONTEND_PORT}"
+    depends_on:
+      - api
