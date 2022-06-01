@@ -13,10 +13,9 @@ const lendService = {
 			"/api/item", 
 			{
 				name: item.name, 
-				id: item.id, 
+				owner_id: item.id, 
 				lend_start: item.lend_start, 
 				lend_end: item.lend_end, 
-				is_lent_item: item.is_lent_item, 
 				img_uri: item.img_uri
 			}
 		)
