@@ -166,7 +166,6 @@
 > > ```
 > > Status Code: 201
 > >
-> > ```
 > > {
 > >         "id":1
 > >         "name":"testitem1",
