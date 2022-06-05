@@ -99,7 +99,6 @@
 > >     {
 > >         "id":9,
 > >         "name":"testitem1",
-> >         "is_lent_item":true,
 > >         "img_uri":"img1.jpg",
 > >         "lend_start":"2022-05-25T05:49:22.473895+00:00",
 > >         "lend_end":"2022-05-25T05:49:22.473943+00:00",
@@ -120,7 +119,6 @@
 > >     {
 > >         "id":9,
 > >         "name":"testitem1",
-> >         "is_lent_item":true,
 > >         "img_uri":"img1.jpg",
 > >         "lend_start":"2022-05-25T05:49:22.473895+00:00",
 > >         "lend_end":"2022-05-25T05:49:22.473943+00:00",
@@ -130,6 +128,38 @@
 > > ]
 > > ```
 
+## PUT /api/user/{uid}/borrows/{iid}
+> ### Request Example:
+> > uid: user id integer
+> >
+> > iid: item id integer
+> ### Response Example:
+> > ```
+> > Status Code: 200
+> >
+> > [
+> >     {
+> >         "id":9,
+> >         "name":"testitem1",
+> >         "img_uri":"img1.jpg",
+> >         "lend_start":"2022-05-25T05:49:22.473895+00:00",
+> >         "lend_end":"2022-05-25T05:49:22.473943+00:00",
+> >         "owner_id":1,
+> >         "borrower_id":2
+> >     }
+> > ]
+> > ```
+
+## DELETE /api/user/{uid}/borrows/{iid}
+> ### Request Example:
+> > uid: user id integer
+> >
+> > iid: item id integer
+> ### Response Example:
+> > ```
+> > Status Code: 204
+> >
+> > ```
 
 ## GET /api/item
 > ### Request Example:
@@ -143,7 +173,6 @@
 > >     {
 > >         "id":1,
 > >         "name":"testitem1",
-> >         "is_lent_item":true,
 > >         "img_uri":"img1.jpg",
 > >         "lend_start":"2022-05-16T18:59:01.139024-07:00",
 > >         "lend_end":"2022-05-16T18:59:01.139032-07:00"
@@ -186,7 +215,6 @@
 > > {
 > >         "id":1,
 > >         "name":"testitem1",
-> >         "is_lent_item":true,
 > >         "img_uri":"img1.jpg",
 > >         "lend_start":"2022-05-16T18:59:01.139024-07:00",
 > >         "lend_end":"2022-05-16T18:59:01.139032-07:00"
