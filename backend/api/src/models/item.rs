@@ -71,8 +71,8 @@ impl Item {
         }
     }
 
-    pub fn update_borrower(&mut self, id:i32) {
-        self.borrower_id = Some(id);
+    pub fn update_borrower(&mut self, id:Option<i32>) {
+        self.borrower_id = id;
     }
 
     pub async fn from_db(db: &Db, id:String) -> Option<Self> {

@@ -18,6 +18,7 @@ pub fn config() -> Scope {
     .service(get_user_owned_items)
     .service(get_user_borrowed_items)
     .service(add_borrow_to_user)
+    .service(remove_borrow_from_user)
 }
 
 pub fn log_user(method:&str, route:&str) {
@@ -122,8 +123,6 @@ async fn get_user_borrowed_items(data: web::Data<SessionData>, id: web::Path<Str
     }
 }
 
-
-// TODO: refactor this
 #[put("/{uid}/borrows/{iid}")]
 async fn add_borrow_to_user(data: web::Data<SessionData>, ids: web::Path<(String, String)>) -> impl Responder {
     let (uid, iid) = ids.into_inner();
@@ -133,8 +132,8 @@ async fn add_borrow_to_user(data: web::Data<SessionData>, ids: web::Path<(String
             Some(mut item) => {
                 match (item.id, user.id) {
                     (Some(iid), Some(uid)) => {
-                        if user.add_borrow(&data.db, iid.to_string()).await {
-                            item.update_borrower(uid);
+                        if user.update_borrow(&data.db, Some(iid)).await {
+                            item.update_borrower(Some(uid));
                             HttpResponse::Ok().json(item)
                         } else {
                             HttpResponse::BadRequest().json(HttpError {
@@ -149,6 +148,43 @@ async fn add_borrow_to_user(data: web::Data<SessionData>, ids: web::Path<(String
                     })
                 }
                 
+            },
+            None => HttpResponse::NotFound().json(HttpError {
+                status_code: 404,
+                message: "unable to find item".to_string()
+            })
+        },
+        None => HttpResponse::NotFound().json(HttpError {
+            status_code: 404,
+            message: "unable to find user".to_string()
+        })
+    }
+}
+
+#[delete("/{uid}/borrows/{iid}")]
+async fn remove_borrow_from_user(data: web::Data<SessionData>, ids: web::Path<(String, String)>) -> impl Responder {
+    let (uid, iid) = ids.into_inner();
+    log_user("DELETE", &format!("/{}/borrows/{}", uid, iid));
+    match User::from_db(&data.db, uid).await {
+        Some(user) => match user.get_items(&data.db, ItemClass::Borrowed).await {
+            Some(items) => {
+                match items.iter().find(|i| i.id == Some(iid.parse().unwrap())) {
+                    Some(_) => {
+                        if user.update_borrow(&data.db, None).await {
+                            HttpResponse::NoContent().finish()
+                        } else {
+                            HttpResponse::BadRequest().json(HttpError {
+                                status_code: 400,
+                                message: "unable to complete request".to_string()
+                            })
+                        }
+                        
+                    }
+                    None => HttpResponse::NotFound().json(HttpError {
+                        status_code: 404,
+                        message: "unable to find item".to_string()
+                    })
+                }
             },
             None => HttpResponse::NotFound().json(HttpError {
                 status_code: 404,

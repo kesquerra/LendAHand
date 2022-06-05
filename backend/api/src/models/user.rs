@@ -72,11 +72,16 @@ impl User {
         }
     }
 
-    pub async fn add_borrow(&self, db: &Db, item_id:String) -> bool {
+    pub async fn update_borrow(&self, db: &Db, item_id: Option<i32>) -> bool {
         match self.id {
             Some(id) => match &db.pool {
                 Some(pool) => {
-                    match sqlx::query(&format!("UPDATE user_items SET borrower_id = {} WHERE item_id = {};", id.to_string(), item_id))
+                    let bid:String;
+                    match item_id {
+                        Some(id) => {bid = id.to_string();}
+                        None => {bid = "NULL".to_string();}
+                    }
+                    match sqlx::query(&format!("UPDATE user_items SET borrower_id = {} WHERE item_id = {};", bid, id))
                     .execute(*&pool).await {
                         Ok(_) => true,
                         Err(e) => {
@@ -89,7 +94,6 @@ impl User {
             },
             None => false
         }
-        
     }
 
     pub async fn get_items(&self, db: &Db, class:ItemClass) -> Option<Vec<Item>> {
