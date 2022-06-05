@@ -4,15 +4,17 @@
 >
 > ## Based on: https://developer.redis.com/howtos/chatapp/
 >
-> ## Intended function: provide chat EventSource stream and backend interface as a microservice 
+> ## Intended function: provide chat EventSource stream and backend interface as a chat microservice. 
 >
-> ## Setup: use: 'cp .env.example .env' inside the 'chat-service/backend' directory
+> ## Setup: add the contents of 'chat.example.env' to the main .env file in the root directory.
 >
-> ## To run, use: 'docker-compose up' within the 'chat-service' directory
+> ## To run by itself, use: 'docker-compose up --build' within the 'chat-service' directory.
+>
+> ## To run as part of  the Full Stack Application, use 'docker-compose up' in the 'LendAHand' directory.
 >
 > # Container endpoint: http://localhost:8080/
 >
-> ### See 'seed-data.redis' in the backend directory for data storage and access examples
+> ### See 'seed-data.redis' in the backend directory for data storage and access examples.
 
 # API Routes:
 

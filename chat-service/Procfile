@@ -1,1 +1,0 @@
-web: gunicorn --worker-class evenlet -w 1 app:app
