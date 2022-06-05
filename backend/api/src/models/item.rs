@@ -6,7 +6,7 @@ use crate::db::Db;
 
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Item {
-    id: Option<i32>,
+    pub id: Option<i32>,
     name: String,
     img_uri: Option<String>,
     lend_start: DateTime<Local>,
@@ -71,10 +71,14 @@ impl Item {
         }
     }
 
+    pub fn update_borrower(&mut self, id:i32) {
+        self.borrower_id = Some(id);
+    }
+
     pub async fn from_db(db: &Db, id:String) -> Option<Self> {
         match &db.pool {
             Some(pool) => {
-                match sqlx::query_as::<_, Self>(&format!("SELECT * FROM items WHERE id = {};", id))
+                match sqlx::query_as::<_, Self>(&format!("SELECT * FROM items i JOIN user_items ui ON i.id = ui.item_id WHERE i.id = {};", id))
                 .fetch_one(*&pool).await {
                     Ok(item) => Some(item),
                     Err(err) => {

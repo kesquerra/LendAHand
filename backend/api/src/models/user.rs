@@ -72,6 +72,26 @@ impl User {
         }
     }
 
+    pub async fn add_borrow(&self, db: &Db, item_id:String) -> bool {
+        match self.id {
+            Some(id) => match &db.pool {
+                Some(pool) => {
+                    match sqlx::query(&format!("UPDATE user_items SET borrower_id = {} WHERE item_id = {};", id.to_string(), item_id))
+                    .execute(*&pool).await {
+                        Ok(_) => true,
+                        Err(e) => {
+                            warn!("Query error: {}", e);
+                            false
+                        }
+                    }
+                },
+                None => false
+            },
+            None => false
+        }
+        
+    }
+
     pub async fn get_items(&self, db: &Db, class:ItemClass) -> Option<Vec<Item>> {
         match &db.pool {
             Some(pool) => {

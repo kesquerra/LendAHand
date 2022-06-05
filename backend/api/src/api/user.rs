@@ -1,8 +1,8 @@
 
 
-use actix_web::{web, get, post, delete, Scope, HttpResponse, Responder};
+use actix_web::{web, get, put, post, delete, Scope, HttpResponse, Responder};
 use crate::models::user::{test_users, User};
-use crate::models::item::ItemClass;
+use crate::models::item::{Item, ItemClass};
 use crate::SessionData;
 use crate::api::{log_api, HttpError};
 use bcrypt::{DEFAULT_COST, hash};
@@ -17,6 +17,7 @@ pub fn config() -> Scope {
     .service(user_by_id)
     .service(get_user_owned_items)
     .service(get_user_borrowed_items)
+    .service(add_borrow_to_user)
 }
 
 pub fn log_user(method:&str, route:&str) {
@@ -92,7 +93,7 @@ async fn delete_user_by_id(data: web::Data<SessionData>, id: web::Path<String>) 
 #[get("/{id}/owns")]
 async fn get_user_owned_items(data: web::Data<SessionData>, id: web::Path<String>) -> impl Responder {
     let id_int = id.into_inner();
-    log_user("GET", &format!("/{}", id_int));
+    log_user("GET", &format!("/{}/owns", id_int));
     match User::from_db(&data.db, id_int).await {
         Some(user) => match user.get_items(&data.db, ItemClass::Owned).await {
             Some(items) => HttpResponse::Ok().json(items),
@@ -108,7 +109,7 @@ async fn get_user_owned_items(data: web::Data<SessionData>, id: web::Path<String
 #[get("/{id}/borrows")]
 async fn get_user_borrowed_items(data: web::Data<SessionData>, id: web::Path<String>) -> impl Responder {
     let id_int = id.into_inner();
-    log_user("GET", &format!("/{}", id_int));
+    log_user("GET", &format!("/{}/borrows", id_int));
     match User::from_db(&data.db, id_int).await {
         Some(user) => match user.get_items(&data.db, ItemClass::Borrowed).await {
             Some(items) => HttpResponse::Ok().json(items),
@@ -117,6 +118,46 @@ async fn get_user_borrowed_items(data: web::Data<SessionData>, id: web::Path<Str
         None => HttpResponse::NotFound().json(HttpError {
             status_code: 404,
             message: "user not found".to_string()
+        })
+    }
+}
+
+
+// TODO: refactor this
+#[put("/{uid}/borrows/{iid}")]
+async fn add_borrow_to_user(data: web::Data<SessionData>, ids: web::Path<(String, String)>) -> impl Responder {
+    let (uid, iid) = ids.into_inner();
+    log_user("PUT", &format!("/{}/borrows/{}", uid, iid));
+    match User::from_db(&data.db, uid).await {
+        Some(user) => match Item::from_db(&data.db, iid).await {
+            Some(mut item) => {
+                match (item.id, user.id) {
+                    (Some(iid), Some(uid)) => {
+                        if user.add_borrow(&data.db, iid.to_string()).await {
+                            item.update_borrower(uid);
+                            HttpResponse::Ok().json(item)
+                        } else {
+                            HttpResponse::BadRequest().json(HttpError {
+                                status_code: 400,
+                                message: "unable to complete request".to_string()
+                            })
+                        }
+                    },
+                    (_, _) => HttpResponse::BadRequest().json(HttpError {
+                        status_code: 400,
+                        message: "unable to complete request".to_string()
+                    })
+                }
+                
+            },
+            None => HttpResponse::NotFound().json(HttpError {
+                status_code: 404,
+                message: "unable to find item".to_string()
+            })
+        },
+        None => HttpResponse::NotFound().json(HttpError {
+            status_code: 404,
+            message: "unable to find user".to_string()
         })
     }
 }
