@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Grad-2/LendAHand/static/css/main.15be4434.css",
+    "main.js": "/Grad-2/LendAHand/static/js/main.28afe05a.js",
+    "index.html": "/Grad-2/LendAHand/index.html",
+    "main.15be4434.css.map": "/Grad-2/LendAHand/static/css/main.15be4434.css.map",
+    "main.28afe05a.js.map": "/Grad-2/LendAHand/static/js/main.28afe05a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.15be4434.css",
+    "static/js/main.28afe05a.js"
+  ]
+}
