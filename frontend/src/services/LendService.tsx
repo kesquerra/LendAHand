@@ -1,5 +1,6 @@
 import { ItemType } from "../Types/types";
 import BackendClient from "./HttpService";
+import axios from "axios";
 
 
 const lendService = {
@@ -20,6 +21,17 @@ const lendService = {
 			}
 		)
 		return response
+	},
+
+	async isValidImageUri(imguri: string){
+		let response = await axios.get(imguri)
+		let status = await response.status
+
+		if(Number(status) === 200){
+			return true
+		}
+		
+		return false
 	}
 }
 
