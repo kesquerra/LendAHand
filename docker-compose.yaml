@@ -4,7 +4,7 @@ services:
     container_name: lah_db
     image: postgres
     volumes:
-      - ./lah_db:/var/lib/postgresql/data/
+      - /var/lib/postgresql/data/
     ports:
       - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     env_file:
