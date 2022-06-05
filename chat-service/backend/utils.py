@@ -29,7 +29,7 @@ def get_messages(room_id=0, offset=0, size=50):
     if not room_exists:
         return [{"messages": None}]
     else:
-        values = redis_client.zrevrange(room_key, offset + size)
+        values = redis_client.zrevrange(room_key, offset, offset + size)
         return list(map(lambda x: json.loads(x.decode("utf-8")), values))
     
 def hmget(key1, key2):

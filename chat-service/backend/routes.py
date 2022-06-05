@@ -12,13 +12,16 @@ def stream():
 @app.route("/me")						
 def get_my_session():
     user = session.get("user", None)
-    return jsonify(user)
+    if user:
+        return jsonify(user), 200
+    else:
+        return jsonify(None), 400
 
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def catch_all(path):
-    # not sure if this needs to return frontend
-    return f"You have connected to the chat-service backend!!! You are trying to access {path}", 200
+    # not sure if this needs to return react component on the frontend
+    return f"You have connected to the chat-service backend!!! You are trying to access {path}:{path}", 200
     # return app.send_static_file("index.html")
 
 @app.route("/help")
@@ -40,17 +43,18 @@ def login():
         user_id = user_key.split(":")[-1]
         user = {"id": user_id, "username": username}
         session["user"] = user
-        utils.redit_client.sadd("online_users", user_id)
+        utils.redis_client.sadd("online_users", user_id)
         return user, 200
     
     if new_user:
         return new_user, 200
     return jsonify({"message": "Invalid username"}), 404
 
-# maybe automatically call this whenever a new login occurs on frontend?
+### maybe automatically call this whenever a new login occurs on frontend? ###
 @app.route("/logout", methods=["POST"])
 def logout():
 	user = session.get("user", None)
+	print(user)
 	if not bool(user):
 		return jsonify({"message": "No user currently logged in"}), 404
 	else:
@@ -71,13 +75,13 @@ def get_user_info_from_ids():
 			is_member = utils.redis_client.sismember("online_users", id)
 			users[id] = {
 				"id": id,
-				"username": user.get(b"username", "").decode("utf-8"),
+				"username": user[b"username"].decode("utf-8"),
 				"online": bool(is_member)
 			}
 		return jsonify(users), 200
 	return jsonify(None), 404
 
-@app.route("/users/online")			# fix online_users, only use sadd, not incr
+@app.route("/users/online")			
 def get_online_users():
     # This returns a JSON of all users currently online
     online_ids = map(
@@ -135,14 +139,13 @@ def get_rooms_for_user_id(user_id=0):
 		return jsonify(None), 404
 	return jsonify(rooms), 200
 
-@app.route("/room/<room_id>/messages")
+@app.route("/room/<string:room_id>/messages")
 def get_messages_for_selected_room(room_id="0"):
     # This will return a JSON of all the messages in a specific room_id e.g. between two users 1 and 2 from "room_id":"1:2"
 	offset = request.args.get("offset")
 	size = request.args.get("size")
-	# need to parse <room_id> into string ####
-	room_id = jsonify(room_id)
 	id = escape(room_id)
+	messages = [{'offset': offset, 'size': size, 'room_id': room_id, 'id': id}]
 	try:
 		messages = utils.get_messages(id, int(offset), int(size))
 		return jsonify(messages), 200

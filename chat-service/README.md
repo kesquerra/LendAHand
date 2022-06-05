@@ -1,6 +1,6 @@
 # Chat Microservice
 > 
-> ## Components: Python chat backend API using redis
+> # Components: Python chat backend API using redis
 >
 > ## Based on: https://developer.redis.com/howtos/chatapp/
 >
@@ -10,13 +10,15 @@
 >
 > ## To run, use: 'docker-compose up' within the 'chat-service' directory
 >
-> ## Container endpoint: http://localhost:8080/
+> # Container endpoint: http://localhost:8080/
+>
+> ### See 'seed-data.redis' in the backend directory for data storage and access examples
 
 # API Routes:
 
-## GET /login
+## POST /login
 > ### Request Example:
-> > {"username": "Adam}
+> > JSON: {"username": "Adam"}
 > ### Response Example:
 > > ```
 > > Status Code: 200
@@ -27,9 +29,22 @@
 > >}
 > > ```
 
-## GET /logout
+## GET /me
 > ### Request Example:
-> > { "username": "Bob } 
+> > No Request Parameters
+> ### Response Example:
+> > ```
+> > Status Code: 200
+> >
+> >{
+> >    "id": "5",
+> >    "username": "Ed"
+> >}
+> > ```
+
+## POST /logout
+> ### Request Example:
+> > JSON: { "username": "Bob" } 
 > ### Response Example:
 > > ```
 {
@@ -65,8 +80,8 @@
 
 ## GET /rooms/user_id
 > ### Request Example:
-> > No Request Parameters
-> > e.g. user_id = 1
+> > Request Parameter: user_id
+> > e.g. user_id = 1 (GET /rooms/1)
 > ### Response Example:
 > > ```
 > > Status Code: 200
@@ -121,4 +136,48 @@
 > >         "username": "Kyle"
 > >     }
 > > }
+> > ```
+
+## GET /users
+> ### Request Example:
+> > Request Parameters: ids[]
+> > List: ids[] = [1,2]
+> ### Response Example:
+> > ```
+> > Status Code: 200
+> > {
+> >     "1": {
+> >         "id": "1",
+> >         "online": true,
+> >         "username": "Adam"
+> >     },
+> >     "2": {
+> >         "id": "2",
+> >         "online": true,
+> >         "username": "Kyle"
+> >     }
+> > }
+> > ```
+
+## GET /room/<room_id>/messages
+> ### Request Example:
+> > Request Parameters
+> > e.g. room_id = 2:3 (GET /room/2:3/messages)
+> ### Response Example:
+> > ```
+> > Status Code: 200
+> > [
+> > {
+> >     "date": 1654459449.3766682,
+> >     "from": 2,
+> >     "message": "What's up?",
+> >     "roomId": "2:3"
+> > },
+> > {
+> >     "date": 1654459339.4714031,
+> >     "from": 3,
+> >     "message": "Hey",
+> >     "roomId": "2:3"
+> > }
+> > ]
 > > ```
