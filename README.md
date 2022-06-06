@@ -42,21 +42,5 @@ All by Lending A Hand.
 ## To Run
 ---
 1) Run the cmd: `git clone https://github.com/Grad-2/LendAHand.git`  
-2) Create a file called `.env` in the base directory (LendAHand).  
-3) Add these lines to the `.env` file you just created:  
-> HOST="0.0.0.0"  
-	POSTGRES_PASSWORD="postgres"  
-	POSTGRES_DB="lah_db"  
-	POSTGRES_USER="postgres"  
-	POSTGRES_PORT=5432  
-	BACKEND_PORT=9000  
-	FRONTEND_PORT=3000  
-	REDIS_HOST="127.0.0.1"  
-	REDIS_PASSWORD=null  
-	REDIS_ENDPOINT_URL=redis://redis:6379  
-	REDIS_PORT=6379  
-	SESSION_TYPE=redis  
-	CHAT_CONFIG=backend.config.ConfigDev  
-	CHAT_PORT=8080
-3) In the directory `LendAHand/backend/api` create a file called `.env.docker` and place the above lines in this file as well.
+2) From the base directory (LendAHand), run the cmd: `cp example.env .env`
 4) In the base directory run the cmd: `docker compose up`
