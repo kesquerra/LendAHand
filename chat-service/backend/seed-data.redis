@@ -1,0 +1,48 @@
+## redis-cli does not accept comments, so this file is simply for reference on redis schemas used. 
+
+# Example template for setting and getting redis chat data
+
+# Set username to user id
+set username:adam user:1
+set username:kyle user:2
+set username:taylor user:3
+
+# Set user hash set
+hset user:1 username "adam"
+hset user:2 username "kyle"
+hset user:3 username "taylor"
+
+# Add users to help room "0"
+sadd user:1:rooms "0"
+sadd user:2:rooms "0"
+sadd user:3:rooms "0"
+
+# Create private room between adam and kyle
+sadd user:1:rooms 1:2 and sadd user:2:rooms 1:2
+
+# Create private room between kyle and taylor
+sadd user:2:rooms 2:3 and sadd user:3:rooms 2:3
+
+# Add message between adam and kyle
+zadd room:1:2 1652641591 "{'from': 1, 'date': 1652641591, 'message': 'Hey what's up?', 'roomId': '1:2'}"
+
+# Add message between kyle and taylor
+zadd room:2:3 1652641702 "{'from': 2, 'date': 1652641702, 'message': 'omg adam just sent me a msg', 'roomId': '2:3'}"
+
+# Maintain number of online users
+sadd online_users 4
+
+# Decrement on disconnect
+srem online_users 1
+
+# Publish adam's message to other server
+publish message "{'serverId: 1, 'type':'message', 'data': {'from': 1, 'date': 1652641591, 'message': 'Hey what's up?', 'roomId': '1:2'}"
+
+# Get user hash set
+hgetall user:1
+
+# Get room ids of user
+smembers user:2:rooms
+
+# Get messages in range [0:50]
+zrevrange room:2:3 0 50
