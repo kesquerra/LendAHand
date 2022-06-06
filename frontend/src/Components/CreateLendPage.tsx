@@ -268,7 +268,7 @@ const CreateLendForm = (props: CreateLendFormProps) => {
 									sx={{mt:2}}
 									id='imguri'
 									variant='filled'
-									label = '*Image Url'
+									label = 'Image Url'
 								/>
 								<Button fullWidth sx={{mt:2}} variant='contained' type='submit' value='Submit'>Submit</Button>
 							</form>
