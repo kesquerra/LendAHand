@@ -1,0 +1,62 @@
+name: Build and Deploy      # on every push to master or pull request, this frontend app will 
+                            # rebuild and deploy onto GitHub Pages, hopefully
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 14
+    
+    - name: Install NPM packages
+      run: npm ci                   # based on package-lock.json
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Run tests
+      run: npm run test
+
+    - name: Upload production-ready build files
+      uses: actions/upload-artifact@v2
+      with:
+        name: production-files
+        path: frontend/build               # used to deploy contents in this directory to gh-pages branch
+  
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' # validates current branch is master
+    
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: production-files
+        path: frontend/build
+
+    - name: Deploy to gh-pages
+      uses: peaceiris/actions-gh-pages@v3 # from gh-actions marketplace
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }} # might need to edit permissions here
+        publish_dir: ./frontend/build
+        force_orphan: true            # ensure each new deployment is based on the latest build
+                                      # to prevent default Jekyll artifact replacing our production-files
