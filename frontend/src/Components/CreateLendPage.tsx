@@ -153,21 +153,18 @@ const CreateLendPage = (props: CreateLendPageProps) => {
 				setDaysError(false)
 				setDaysErrorMsg("")
 			}
+		}
 
-			// check img uri
-			if(formValues.imguri === defaultFormValues.imguri){
+
+		// check img uri if not default ("" is an ok option)
+		if(formValues.imguri !== defaultFormValues.imguri){
+			if(await isValidImage(formValues.imguri) === false){
 				setImgError(true)
-				setImgErrorMsg("Field is Required")
+				setImgErrorMsg("Unable to load image.")
 				isValid = false
 			} else {
-				if(await isValidImage(formValues.imguri) === false){
-					setImgError(true)
-					setImgErrorMsg("Failed to load image.")
-					isValid = false
-				} else {
-					setImgError(false)
-					setImgErrorMsg("")
-				}
+				setImgError(false)
+				setImgErrorMsg("")
 			}
 		}
 

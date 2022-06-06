@@ -24,14 +24,14 @@ const lendService = {
 	},
 
 	async isValidImageUri(imguri: string){
-		let response = await axios.get(imguri)
-		let status = await response.status
+		let isValid = true
+		await axios.get(imguri)	
+			.catch(e => {
+				console.log("Error: ",e)
+				isValid = false
+			})
 
-		if(Number(status) === 200){
-			return true
-		}
-		
-		return false
+		return isValid
 	}
 }
 
