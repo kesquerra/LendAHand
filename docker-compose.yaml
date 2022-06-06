@@ -31,3 +31,23 @@ services:
       - "${FRONTEND_PORT}"
     depends_on:
       - api
+      - chat
+
+  chat:
+    container_name: chat
+    build:
+      context: ./chat-service 
+      dockerfile: Dockerfile
+    ports:
+      - '${CHAT_PORT}:${CHAT_PORT}'
+    restart: unless-stopped
+    depends_on: 
+      - redis 
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "${REDIS_PORT}"    
+   
+  redis:
+    container_name: redis
+    image: "redis:latest"
+    restart: unless-stopped
