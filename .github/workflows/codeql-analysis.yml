@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'go', 'javascript' ] # no rust unfortunately
+        language: ['javascript', python ] # no rust unfortunately
 
     steps:
     - name: Checkout repository

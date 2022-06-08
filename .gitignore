@@ -3,3 +3,5 @@
 /backend/internal_api/target
 .env
 lah_db*
+venv/
+env/

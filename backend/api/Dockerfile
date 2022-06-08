@@ -13,7 +13,6 @@ RUN sed -i 's#dummy.rs#src/main.rs#' Cargo.toml
 
 COPY ./src ./src
 COPY ./migrations ./migrations
-COPY .env.docker .env
 
 RUN cargo build --release
 
