@@ -157,16 +157,16 @@ const CreateLendPage = (props: CreateLendPageProps) => {
 
 
 		// check img uri if not default ("" is an ok option)
-		if(formValues.imguri !== defaultFormValues.imguri){
-			if(await isValidImage(formValues.imguri) === false){
-				setImgError(true)
-				setImgErrorMsg("Unable to load image.")
-				isValid = false
-			} else {
-				setImgError(false)
-				setImgErrorMsg("")
-			}
-		}
+		// if(formValues.imguri !== defaultFormValues.imguri){
+		// 	if(await isValidImage(formValues.imguri) === false){
+		// 		setImgError(true)
+		// 		setImgErrorMsg("Unable to load image.")
+		// 		isValid = false
+		// 	} else {
+		// 		setImgError(false)
+		// 		setImgErrorMsg("")
+		// 	}
+		// }
 
 		return isValid
 	}
