@@ -6,10 +6,10 @@ export interface UserType {
 export interface ItemType  {
 	id: number,
 	name: string,
-	is_lent_item: boolean,
 	img_uri: string,
 	lend_start: string,
-	lend_end: string
+	lend_end: string,
+	is_lent_item: boolean
 }
 
 
