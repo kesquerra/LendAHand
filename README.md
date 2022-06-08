@@ -13,7 +13,7 @@ Requires .env file in base directory: [Example](https://github.com/Grad-2/LendAH
 
 
 ---
-## Purpose
+### Purpose
 ---
 Today, there is an overabundance of just about everything.  
 This causes two issues. Items not use and items gone to waste.  
@@ -39,7 +39,7 @@ All by Lending A Hand.
 
 
 ---
-## To Run
+### To Run
 ---
 1) Run the cmd: `git clone https://github.com/Grad-2/LendAHand.git`  
 2) From the base directory (LendAHand), run the cmd: `cp example.env .env`
